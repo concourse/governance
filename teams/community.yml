@@ -1,0 +1,12 @@
+name: community
+
+purpose: |
+  Facilitating the growth of the Concourse community through content creation,
+  organizing events, proactively collecting feedback, etc.
+
+members:
+- vito
+
+repos:
+- docs
+- examples

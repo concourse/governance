@@ -1,0 +1,11 @@
+name: core
+
+purpose: |
+  Designing Concourse core concepts, steering the design direction through
+  the RFC process.
+
+members:
+- vito
+
+repos:
+- rfcs

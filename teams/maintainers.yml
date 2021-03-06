@@ -1,0 +1,38 @@
+name: maintainers
+
+purpose: |
+  Building Concourse while improving the stability, quality, and security of
+  the product.
+
+members:
+- vito
+
+repos:
+- concourse
+- baggageclaim
+- dex
+- retryhttp
+
+- ci
+- concourse-bosh-release
+- concourse-chart
+
+# TODO: these go a bit beyond the scope - maybe someday this could be a
+# different team?
+- resource-types
+- resource-types-website
+- docker-image-resource
+- git-resource
+- semver-resource
+- s3-resource
+- github-release-resource
+- registry-image-resource
+- concourse-pipeline-resource
+- pool-resource
+- time-resource
+- tracker-resource
+- bosh-deployment-resource
+- bosh-io-stemcell-resource
+- hg-resource
+- datadog-event-resource
+- mock-resource
