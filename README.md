@@ -119,3 +119,44 @@ $ go test
 
 Test failures must be addressed immediately as they may indicate abuse, though
 laziness or ignorance of this process is more likely.
+
+
+## GitHub Organization Settings
+
+This governance model requires that organization members have extremely limited
+[privileges][member-privileges]. Unfortunately these can't currently be set by
+Terraform, so I'm documenting them here for good measure.
+
+The following settings are required for any of this to make sense:
+
+* **Base permissions** must be "None" so that organization membership does not
+  grant visibility of private repositories (if any exist) and repository
+  access is determined exclusively through teams.
+* **Repository creation** must be disabled for both Public and Private so that
+  all repository management shall be done through this repo.
+* **Allow members to create teams** must be disabled so that all team
+  administration shall be done through this repo.
+
+Additionally, repository admin permissions should be restricted. No team will
+ever be an 'admin' at the repo level, so this should never come up, but we can
+prevent further damage if someone does manage to escalate:
+
+* **Allow members to change repository visibilities for this organization**
+  should be disabled.
+* **Allow members to delete or transfer repositories for this organization**
+  should be disabled.
+* **Allow members to delete issues for this organization** should be disabled.
+
+These settings probably won't have much impact:
+
+* **Pages creation** can be allowed for Public repositories.
+* **Allow forking of private repositories** should be disabled just to keep
+  access tidy.
+* **Allow users with read access to create discussions** is confusingly under
+  the 'Admin repository permissions' heading but sounds rather innocuous, so it
+  can be left checked.
+
+*More settings may appear on the member privileges page at some point. Please
+update the above listing if/when this does occur.*
+
+[member-privileges]: https://github.com/organizations/concourse/settings/member_privileges
