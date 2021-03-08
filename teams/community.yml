@@ -1,8 +1,15 @@
 name: community
 
 purpose: |
-  Facilitating the growth of the Concourse community through content creation,
-  organizing events, proactively collecting feedback, etc.
+  Enabling the growth of Concourse's community of users and contributors.
+
+responsibilities:
+- develop the Concourse website and documentation
+- develop the governance model
+- reflect, enforce, and maintain the Code of Coduct
+- facilitate or directly contribute to content creation (blog posts, Tweets, etc.)
+- organize events, office hours, etc.
+- facilitate feedback between the community and other teams
 
 members:
 - vito
@@ -10,3 +17,4 @@ members:
 repos:
 - docs
 - examples
+# - governance

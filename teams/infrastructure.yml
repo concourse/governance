@@ -1,13 +1,17 @@
 name: infrastructure
 
 purpose: |
-  Managing roles/access control, CI/CD infrastructure, and billable accounts.
+  Provisioning and granting teams access to infrastructure necessary for the
+  Concourse project.
+
+responsibilities:
+- manage and provision deployments, accounts, etc. needed by Concourse teams
+- ensure secure storage and access to credentials
 
 members:
 - vito
 
 repos:
-- boarding-pass
 - greenpeace
 - hush-house
 - oxygen-mask

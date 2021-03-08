@@ -1,11 +1,19 @@
 name: maintainers
 
 purpose: |
-  Building Concourse while improving the stability, quality, and security of
-  the product.
+  Shipping the Concourse product and maintaining a high standard for quality,
+  stability, and security.
 
 members:
 - vito
+
+responsibilities:
+- review issues reported by users
+- review pull requests opened by contributors
+- maintain and improve codebase health and test quality
+- maintain and improve product stability, quality, and security
+- collaborate with @core via RFCs to develop a roadmap that addresses as much
+  user feedback as possible
 
 repos:
 - concourse
@@ -16,6 +24,8 @@ repos:
 - ci
 - concourse-bosh-release
 - concourse-chart
+
+- boarding-pass
 
 # TODO: these go a bit beyond the scope - maybe someday this could be a
 # different team?

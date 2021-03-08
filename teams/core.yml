@@ -4,6 +4,16 @@ purpose: |
   Designing Concourse core concepts, steering the design direction through
   the RFC process.
 
+responsibilities:
+- review RFCs or delegate their review to a more relevant team
+- maintain Concourse's design principles through the RFC review process
+- clarify Concourse's design principles over time
+- reach consensus and usher each RFC through the resolution process
+- collaborate with @community to collect feedback for RFCs
+- collaborate with @maintainers to ensure RFCs are acceptable to maintain
+- collaborate with @maintainers to develop a roadmap that fits Concourse's
+  design principles
+
 members:
 - vito
 
