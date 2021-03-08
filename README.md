@@ -81,7 +81,7 @@ Pull requests to `./repos` will be reviewed by the
 ## Amending the Governance Model
 
 > Frankly, I am more used to solving computer problems than human problems, so
-> this may be naive, it may feel too rigid, or it may feel completely
+> this process may be naive, it may feel too rigid, or it may feel completely
 > ambiguous. Nothing here is set in stone. Please improve it as necessary and
 > remove this disclaimer once we feel more confident. - **@vito**
 
