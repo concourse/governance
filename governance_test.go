@@ -22,17 +22,19 @@ func TestGitHub(t *testing.T) {
 	})
 
 	t.Run("repos", func(t *testing.T) {
-		for _, repo := range desired.Repos {
-			actualRepo, found := actual.Repo(repo.Name)
-			require.True(t, found, "repo does not exist")
+		for _, d := range desired.Repos {
+			desiredRepo := d
 
-			t.Run(actualRepo.Name, func(t *testing.T) {
+			t.Run(desiredRepo.Name, func(t *testing.T) {
+				actualRepo, found := actual.Repo(desiredRepo.Name)
+				require.True(t, found, "repo does not exist")
+
 				t.Run("has matching configuration", func(t *testing.T) {
-					require.Equal(t, repo.Description, actualRepo.Description)
-					require.Equal(t, repo.Topics, actualRepo.Topics)
-					require.Equal(t, repo.HasIssues, actualRepo.HasIssues)
-					require.Equal(t, repo.HasProjects, actualRepo.HasProjects)
-					require.Equal(t, repo.HasWiki, actualRepo.HasWiki)
+					require.Equal(t, desiredRepo.Description, actualRepo.Description)
+					require.Equal(t, desiredRepo.Topics, actualRepo.Topics)
+					require.Equal(t, desiredRepo.HasIssues, actualRepo.HasIssues)
+					require.Equal(t, desiredRepo.HasProjects, actualRepo.HasProjects)
+					require.Equal(t, desiredRepo.HasWiki, actualRepo.HasWiki)
 				})
 
 				t.Run("has no collaborators", func(t *testing.T) {
@@ -41,41 +43,47 @@ func TestGitHub(t *testing.T) {
 			})
 		}
 
-		for _, repo := range actual.Repos {
-			_, found := desired.Repo(repo.Name)
+		for _, a := range actual.Repos {
+			actualRepo := a
+
+			_, found := desired.Repo(actualRepo.Name)
 			if found {
 				continue
 			}
 
-			t.Run(repo.Name, func(t *testing.T) {
-				t.Error("repo should not exist")
+			t.Run(actualRepo.Name, func(t *testing.T) {
+				t.Error("repo is not in configuration")
 			})
 		}
 	})
 
 	t.Run("teams", func(t *testing.T) {
-		for _, team := range desired.Teams {
-			t.Run(team.Name, func(t *testing.T) {
-				actualTeam, found := actual.Team(team.Name)
+		for _, d := range desired.Teams {
+			desiredTeam := d
+
+			t.Run(desiredTeam.Name, func(t *testing.T) {
+				actualTeam, found := actual.Team(desiredTeam.Name)
 				require.True(t, found, "team does not exist")
 
 				t.Run("members", func(t *testing.T) {
-					require.ElementsMatch(t, team.Members, actualTeam.Members)
+					require.ElementsMatch(t, desiredTeam.Members, actualTeam.Members)
 				})
 
 				t.Run("repos", func(t *testing.T) {
-					require.ElementsMatch(t, team.Repos, actualTeam.Repos)
+					require.ElementsMatch(t, desiredTeam.Repos, actualTeam.Repos)
 				})
 			})
 		}
 
-		for _, team := range actual.Teams {
-			_, found := desired.Team(team.Name)
+		for _, a := range actual.Teams {
+			actualTeam := a
+
+			_, found := desired.Team(actualTeam.Name)
 			if found {
 				continue
 			}
 
-			t.Run(team.Name, func(t *testing.T) {
+			t.Run(actualTeam.Name, func(t *testing.T) {
 				t.Error("team should not exist")
 			})
 		}

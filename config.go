@@ -12,6 +12,7 @@ import (
 type Config struct {
 	Contributors map[string]Person
 	Teams        map[string]Team
+	Repos        map[string]Repo
 }
 
 type Person struct {
@@ -26,6 +27,15 @@ type Team struct {
 	Purpose string   `yaml:"purpose"`
 	Members []string `yaml:"members"`
 	Repos   []string `yaml:"repos"`
+}
+
+type Repo struct {
+	Name        string   `yaml:"name"`
+	Description string   `yaml:"description"`
+	Topics      []string `yaml:"topics"`
+	HasIssues   bool     `yaml:"has_issues"`
+	HasProjects bool     `yaml:"has_projects,omitempty"`
+	HasWiki     bool     `yaml:"has_wiki,omitempty"`
 }
 
 func LoadConfig(tree fs.FS) (*Config, error) {
@@ -75,9 +85,33 @@ func LoadConfig(tree fs.FS) (*Config, error) {
 		teams[strings.TrimSuffix(f.Name(), ".yml")] = team
 	}
 
+	repoFiles, err := fs.ReadDir(tree, "repos")
+	if err != nil {
+		return nil, err
+	}
+
+	repos := map[string]Repo{}
+	for _, f := range repoFiles {
+		fn := filepath.Join("repos", f.Name())
+
+		file, err := tree.Open(fn)
+		if err != nil {
+			return nil, err
+		}
+
+		var repo Repo
+		err = yaml.NewDecoder(file).Decode(&repo)
+		if err != nil {
+			return nil, fmt.Errorf("decode %s: %w", fn, err)
+		}
+
+		repos[strings.TrimSuffix(f.Name(), ".yml")] = repo
+	}
+
 	return &Config{
 		Contributors: contributors,
 		Teams:        teams,
+		Repos:        repos,
 	}, nil
 }
 
@@ -122,6 +156,18 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 		}
 
 		state.Teams = append(state.Teams, ghTeam)
+	}
+
+	for _, repo := range cfg.Repos {
+		state.Repos = append(state.Repos, GitHubRepo{
+			Name:                repo.Name,
+			Description:         repo.Description,
+			Topics:              repo.Topics,
+			HasIssues:           repo.HasIssues,
+			HasProjects:         repo.HasProjects,
+			HasWiki:             repo.HasWiki,
+			DirectCollaborators: []GitHubRepoCollaborator{},
+		})
 	}
 
 	return state
