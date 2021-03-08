@@ -56,7 +56,8 @@ Each `./teams/*.yml` file has the following fields:
 
 * `name` - a name for the team, stylized in lowercase.
 * `purpose` - a brief description of the team's focus.
-* `responsibilities` - a list of the team's discrete responsibilities.
+* `responsibilities` - a list of the team's discrete responsibilities, or a
+  link to where they can be found.
 * `members` - a list of contributors to add to the team, e.g. `foo` for
   `./contributors/foo.yml`.
 * `repos` - a list of GitHub repositories for the team to be added to.
