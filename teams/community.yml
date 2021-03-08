@@ -17,4 +17,4 @@ members:
 repos:
 - docs
 - examples
-# - governance
+- governance

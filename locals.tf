@@ -9,6 +9,11 @@ locals {
       trimsuffix(basename(f), ".yml") => yamldecode(file(f))
   }
 
+  repos = {
+    for f in fileset(path.module, "repos/*.yml") :
+      trimsuffix(basename(f), ".yml") => yamldecode(file(f))
+  }
+
   team_memberships = flatten([
     for teamname, team in local.teams : [
       for person in team.members : {

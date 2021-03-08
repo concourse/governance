@@ -22,11 +22,33 @@ func TestGitHub(t *testing.T) {
 	})
 
 	t.Run("repos", func(t *testing.T) {
-		for _, repo := range actual.Repos {
-			t.Run(repo.Name, func(t *testing.T) {
-				t.Run("has no collaborators", func(t *testing.T) {
-					require.Empty(t, repo.DirectCollaborators)
+		for _, repo := range desired.Repos {
+			actualRepo, found := actual.Repo(repo.Name)
+			require.True(t, found, "repo does not exist")
+
+			t.Run(actualRepo.Name, func(t *testing.T) {
+				t.Run("has matching configuration", func(t *testing.T) {
+					require.Equal(t, repo.Description, actualRepo.Description)
+					require.Equal(t, repo.Topics, actualRepo.Topics)
+					require.Equal(t, repo.HasIssues, actualRepo.HasIssues)
+					require.Equal(t, repo.HasProjects, actualRepo.HasProjects)
+					require.Equal(t, repo.HasWiki, actualRepo.HasWiki)
 				})
+
+				t.Run("has no collaborators", func(t *testing.T) {
+					require.Empty(t, actualRepo.DirectCollaborators)
+				})
+			})
+		}
+
+		for _, repo := range actual.Repos {
+			_, found := desired.Repo(repo.Name)
+			if found {
+				continue
+			}
+
+			t.Run(repo.Name, func(t *testing.T) {
+				t.Error("repo should not exist")
 			})
 		}
 	})

@@ -19,6 +19,16 @@ type GitHubState struct {
 	Repos   []GitHubRepo
 }
 
+func (state GitHubState) Repo(name string) (GitHubRepo, bool) {
+	for _, team := range state.Repos {
+		if team.Name == name {
+			return team, true
+		}
+	}
+
+	return GitHubRepo{}, false
+}
+
 func (state GitHubState) Team(name string) (GitHubTeam, bool) {
 	for _, team := range state.Teams {
 		if team.Name == name {
@@ -53,6 +63,11 @@ type GitHubTeamRepoAccess struct {
 
 type GitHubRepo struct {
 	Name                string
+	Description         string
+	Topics              []string
+	HasIssues           bool
+	HasWiki             bool
+	HasProjects         bool
 	DirectCollaborators []GitHubRepoCollaborator
 }
 
@@ -214,6 +229,20 @@ func (state *GitHubState) LoadRepos(ctx context.Context, client *githubv4.Client
 				Nodes []struct {
 					Name string
 
+					Description string
+
+					Topics struct {
+						Nodes []struct {
+							Topic struct {
+								Name string
+							}
+						}
+					} `graphql:"repositoryTopics(first: 10)"` // 10 ought to be enough
+
+					HasIssuesEnabled   bool
+					HasProjectsEnabled bool
+					HasWikiEnabled     bool
+
 					Collaborators struct {
 						Edges []struct {
 							Permission string
@@ -240,7 +269,15 @@ func (state *GitHubState) LoadRepos(ctx context.Context, client *githubv4.Client
 
 	for _, node := range reposQ.Organization.Repositories.Nodes {
 		repo := GitHubRepo{
-			Name: node.Name,
+			Name:        node.Name,
+			Description: node.Description,
+			HasIssues:   node.HasIssuesEnabled,
+			HasProjects: node.HasProjectsEnabled,
+			HasWiki:     node.HasWikiEnabled,
+		}
+
+		for _, node := range node.Topics.Nodes {
+			repo.Topics = append(repo.Topics, node.Topic.Name)
 		}
 
 		for _, edge := range node.Collaborators.Edges {
