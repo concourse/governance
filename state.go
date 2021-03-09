@@ -11,10 +11,24 @@ import (
 	"golang.org/x/oauth2"
 )
 
+type OrgRole string
+
+const OrgRoleMember OrgRole = "MEMBER"
+const OrgRoleAdmin OrgRole = "ADMIN"
+
+type TeamRole string
+
+const TeamRoleMember TeamRole = "MEMBER"
+const TeamRoleMaintainer TeamRole = "MAINTAINER"
+
+type RepoPermission string
+
+const RepoPermissionMaintain RepoPermission = "MAINTAIN"
+
 type GitHubState struct {
 	Organization string
 
-	Members []GitHubOrgMembership
+	Members []GitHubOrgMember
 	Teams   []GitHubTeam
 	Repos   []GitHubRepo
 }
@@ -39,26 +53,26 @@ func (state GitHubState) Repo(name string) (GitHubRepo, bool) {
 	return GitHubRepo{}, false
 }
 
-type GitHubOrgMembership struct {
+type GitHubOrgMember struct {
 	Login string
-	Role  string
+	Role  OrgRole
 }
 
 type GitHubTeam struct {
 	Name        string
 	Description string
-	Members     []GitHubTeamMembership
+	Members     []GitHubTeamMember
 	Repos       []GitHubTeamRepoAccess
 }
 
-type GitHubTeamMembership struct {
+type GitHubTeamMember struct {
 	Login string
-	Role  string
+	Role  TeamRole
 }
 
 type GitHubTeamRepoAccess struct {
 	Name       string
-	Permission string
+	Permission RepoPermission
 }
 
 type GitHubRepo struct {
@@ -144,9 +158,9 @@ func (state *GitHubState) LoadMembers(ctx context.Context, client *githubv4.Clie
 		}
 
 		for _, edge := range membersQ.Organization.Members.Edges {
-			state.Members = append(state.Members, GitHubOrgMembership{
+			state.Members = append(state.Members, GitHubOrgMember{
 				Login: edge.Node.Login,
-				Role:  edge.Role,
+				Role:  OrgRole(edge.Role),
 			})
 		}
 
@@ -203,16 +217,16 @@ func (state *GitHubState) LoadTeams(ctx context.Context, client *githubv4.Client
 		}
 
 		for _, edge := range node.Members.Edges {
-			team.Members = append(team.Members, GitHubTeamMembership{
+			team.Members = append(team.Members, GitHubTeamMember{
 				Login: edge.Node.Login,
-				Role:  edge.Role,
+				Role:  TeamRole(edge.Role),
 			})
 		}
 
 		for _, edge := range node.Repositories.Edges {
 			team.Repos = append(team.Repos, GitHubTeamRepoAccess{
 				Name:       edge.Node.Name,
-				Permission: edge.Permission,
+				Permission: RepoPermission(edge.Permission),
 			})
 		}
 

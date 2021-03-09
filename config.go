@@ -119,12 +119,12 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 	var state GitHubState
 
 	for _, person := range cfg.Contributors {
-		role := "MEMBER"
+		role := OrgRoleMember
 		if person.Admin {
-			role = "ADMIN"
+			role = OrgRoleAdmin
 		}
 
-		state.Members = append(state.Members, GitHubOrgMembership{
+		state.Members = append(state.Members, GitHubOrgMember{
 			Login: person.GitHub,
 			Role:  role,
 		})
@@ -137,12 +137,12 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 		}
 
 		for _, m := range team.Members {
-			role := "MEMBER"
+			role := TeamRoleMember
 			if cfg.Contributors[m].Admin {
-				role = "MAINTAINER"
+				role = TeamRoleMaintainer
 			}
 
-			ghTeam.Members = append(ghTeam.Members, GitHubTeamMembership{
+			ghTeam.Members = append(ghTeam.Members, GitHubTeamMember{
 				Login: m,
 				Role:  role,
 			})
@@ -151,7 +151,7 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 		for _, r := range team.Repos {
 			ghTeam.Repos = append(ghTeam.Repos, GitHubTeamRepoAccess{
 				Name:       r,
-				Permission: "MAINTAIN",
+				Permission: RepoPermissionMaintain,
 			})
 		}
 
