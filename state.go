@@ -260,6 +260,8 @@ func (state *GitHubState) LoadRepos(ctx context.Context, client *githubv4.Client
 							}
 						} `graphql:"repositoryTopics(first: 10)"` // 10 ought to be enough
 
+						IsArchived bool
+
 						HasIssuesEnabled   bool
 						HasProjectsEnabled bool
 						HasWikiEnabled     bool
@@ -292,6 +294,10 @@ func (state *GitHubState) LoadRepos(ctx context.Context, client *githubv4.Client
 		}
 
 		for _, node := range reposQ.Organization.Repositories.Nodes {
+			if node.IsArchived {
+				continue
+			}
+
 			repo := GitHubRepo{
 				Name:        node.Name,
 				Description: node.Description,

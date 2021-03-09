@@ -44,6 +44,8 @@ resource "github_repository" "repos" {
 
   # this was deprecated in 2013 but still defaults to true?
   has_downloads = false
+
+  archive_on_destroy = true
 }
 
 resource "github_team_membership" "members" {
