@@ -51,7 +51,12 @@ resource "github_repository" "repos" {
   # this was deprecated in 2013 but still defaults to true?
   has_downloads = false
 
+  # safer sane default; repo can be manually destroyed if desired
   archive_on_destroy = true
+
+  # sane defaults
+  vulnerability_alerts = true
+  delete_branch_on_merge = true
 
   dynamic "pages" {
     for_each = try([each.value.pages], [])
