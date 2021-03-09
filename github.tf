@@ -89,6 +89,6 @@ resource "github_team_repository" "repos" {
   }
 
   team_id = github_team.teams[each.value.team_name].id
-  repository = each.value.repository
+  repository = github_repository.repos[each.value.repository].name
   permission = each.value.permission
 }
