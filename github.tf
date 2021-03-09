@@ -18,6 +18,11 @@ resource "github_team" "teams" {
   description = trimspace(join(" ", split("\n", each.value.purpose)))
   privacy = "closed"
   create_default_maintainer = false
+
+  # TODO: remove once we remove the old team hierarchy
+  lifecycle {
+    ignore_changes = [parent_team_id, privacy]
+  }
 }
 
 resource "github_repository" "repos" {
