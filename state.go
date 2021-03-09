@@ -320,6 +320,8 @@ func (state *GitHubState) LoadRepos(ctx context.Context, client *githubv4.Client
 							}
 						} `graphql:"repositoryTopics(first: 10)"` // 10 ought to be enough
 
+						HomepageURL string
+
 						IsArchived bool
 
 						HasIssuesEnabled   bool
@@ -361,6 +363,7 @@ func (state *GitHubState) LoadRepos(ctx context.Context, client *githubv4.Client
 			repo := GitHubRepo{
 				Name:        node.Name,
 				Description: node.Description,
+				HomepageURL: node.HomepageURL,
 				HasIssues:   node.HasIssuesEnabled,
 				HasProjects: node.HasProjectsEnabled,
 				HasWiki:     node.HasWikiEnabled,

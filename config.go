@@ -31,12 +31,20 @@ type Team struct {
 }
 
 type Repo struct {
-	Name        string   `yaml:"name"`
-	Description string   `yaml:"description"`
-	Topics      []string `yaml:"topics"`
-	HasIssues   bool     `yaml:"has_issues"`
-	HasProjects bool     `yaml:"has_projects,omitempty"`
-	HasWiki     bool     `yaml:"has_wiki,omitempty"`
+	Name        string     `yaml:"name"`
+	Description string     `yaml:"description"`
+	Topics      []string   `yaml:"topics"`
+	HomepageURL string     `yaml:"homepage_url,omitempty"`
+	HasIssues   bool       `yaml:"has_issues"`
+	HasProjects bool       `yaml:"has_projects,omitempty"`
+	HasWiki     bool       `yaml:"has_wiki,omitempty"`
+	Pages       *RepoPages `yaml:"pages,omitempty"`
+}
+
+type RepoPages struct {
+	CNAME  string `yaml:"cname,omitempty"`
+	Branch string `yaml:"branch"`
+	Path   string `yaml:"path,omitempty"`
 }
 
 func LoadConfig(tree fs.FS) (*Config, error) {
@@ -165,6 +173,7 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 			Name:                repo.Name,
 			Description:         repo.Description,
 			Topics:              repo.Topics,
+			HomepageURL:         repo.HomepageURL,
 			HasIssues:           repo.HasIssues,
 			HasProjects:         repo.HasProjects,
 			HasWiki:             repo.HasWiki,

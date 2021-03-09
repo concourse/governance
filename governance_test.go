@@ -32,6 +32,7 @@ func TestGitHub(t *testing.T) {
 				t.Run("has matching configuration", func(t *testing.T) {
 					require.Equal(t, desiredRepo.Description, actualRepo.Description)
 					require.ElementsMatch(t, desiredRepo.Topics, actualRepo.Topics)
+					require.Equal(t, desiredRepo.HomepageURL, actualRepo.HomepageURL)
 					require.Equal(t, desiredRepo.HasIssues, actualRepo.HasIssues)
 					require.Equal(t, desiredRepo.HasProjects, actualRepo.HasProjects)
 					require.Equal(t, desiredRepo.HasWiki, actualRepo.HasWiki)
