@@ -72,10 +72,34 @@ team, the affected teams, and any members being added to a team.
 
 Repositories are listed under `./repos`.
 
+Each `./repos/*.yml` file has the following fields:
+
+* `name` - a name for the repository.
+* `description` - a description for the repository.
+* `topics` - topics to set for the repository.
+* `homepage_url` - a website (if any) associated to the repository.
+* `has_issues` - whether the repository has Issues enabled (default `false`).
+* `has_projects` - whether the repository has Projects enabled (default
+  `false`).
+* `has_wiki` - whether the repository has the Wiki enabled (default `false`).
+* `pages` - GitHub pages configuration:
+  * `branch` - the branch to build.
+  * `path` - the path to serve (default `/`).
+  * `cname` - an optional CNAME to set for the website.
+
+All repositories have [vulnerability alerts][vulnerability_alerts] enabled.
+
+All repositories are configured to [delete branches][delete_branches] once
+their PR is merged.
+
+All repositories will be archived upon deletion from this repo (instead of
+being deleted). Permanent deletion must be done manually by an administrator.
+
 Pull requests to `./repos` will be reviewed by the
 **@concourse/infrastructure** team.
 
-(TODO)
+[vulnerability_alerts]: https://docs.github.com/en/github/managing-security-vulnerabilities/about-alerts-for-vulnerable-dependencies
+[delete_branches]: https://docs.github.com/en/github/administering-a-repository/managing-the-automatic-deletion-of-branches
 
 
 ## Amending the Governance Model
