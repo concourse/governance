@@ -33,9 +33,9 @@ type Team struct {
 type Repo struct {
 	Name        string     `yaml:"name"`
 	Description string     `yaml:"description"`
-	Topics      []string   `yaml:"topics"`
+	Topics      []string   `yaml:"topics,omitempty"`
 	HomepageURL string     `yaml:"homepage_url,omitempty"`
-	HasIssues   bool       `yaml:"has_issues"`
+	HasIssues   bool       `yaml:"has_issues,omitempty"`
 	HasProjects bool       `yaml:"has_projects,omitempty"`
 	HasWiki     bool       `yaml:"has_wiki,omitempty"`
 	Pages       *RepoPages `yaml:"pages,omitempty"`
