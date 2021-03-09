@@ -1,0 +1,7 @@
+name: csi-driver-host-path
+description: A sample (non-production) CSI Driver that creates a local directory as
+  a volume on a single node
+topics: []
+has_issues: false
+has_projects: true
+has_wiki: true

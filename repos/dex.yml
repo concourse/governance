@@ -1,0 +1,7 @@
+name: dex
+description: A fork of coreos/dex with changes necessary for Concourse. **See `maintenance`
+  branch for details.**
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true

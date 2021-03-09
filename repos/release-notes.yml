@@ -1,0 +1,6 @@
+name: release-notes
+description: official Concourse release notes and toolchain used to generate them
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true

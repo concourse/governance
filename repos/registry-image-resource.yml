@@ -1,0 +1,6 @@
+name: registry-image-resource
+description: a resource for images in a Docker registry
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true

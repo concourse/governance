@@ -1,0 +1,6 @@
+name: go-archive
+description: Utilities for extracting and compressing tgz and zip files.
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true

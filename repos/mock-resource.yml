@@ -1,0 +1,7 @@
+name: mock-resource
+description: a resource for testing; reflects the version it's told, and is able to
+  mirror itself
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true

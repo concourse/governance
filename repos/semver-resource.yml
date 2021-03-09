@@ -1,0 +1,6 @@
+name: semver-resource
+description: automated semantic version bumping
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true

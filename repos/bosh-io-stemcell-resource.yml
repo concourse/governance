@@ -1,0 +1,6 @@
+name: bosh-io-stemcell-resource
+description: tracks BOSH stemcells published on https://bosh.io
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true

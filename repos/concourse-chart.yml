@@ -1,0 +1,6 @@
+name: concourse-chart
+description: Helm chart to install Concourse
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true

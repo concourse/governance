@@ -1,0 +1,10 @@
+name: docs
+description: concourse documentation and website
+topics: []
+homepage_url: https://concourse-ci.org
+has_issues: true
+has_projects: true
+has_wiki: true
+pages:
+  cname: concourse-ci.org
+  branch: gh-pages

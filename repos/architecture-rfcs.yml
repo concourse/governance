@@ -1,0 +1,6 @@
+name: architecture-rfcs
+description: proposals for internal architectural changes
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true

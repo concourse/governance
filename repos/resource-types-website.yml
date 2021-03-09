@@ -1,0 +1,7 @@
+name: resource-types-website
+description: Website for Concourse resource types (Beta)
+topics: []
+homepage_url: https://resource-types.concourse-ci.org
+has_issues: true
+has_projects: true
+has_wiki: true

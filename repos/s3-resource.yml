@@ -1,0 +1,6 @@
+name: s3-resource
+description: Concourse resource for interacting with AWS S3
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true

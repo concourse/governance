@@ -1,0 +1,6 @@
+name: concourse-bosh-deployment
+description: A toolchain for deploying Concourse with BOSH.
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true

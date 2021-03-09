@@ -1,0 +1,6 @@
+name: pool-resource
+description: atomically manages the state of the world (e.g. external environments)
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true
