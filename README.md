@@ -132,8 +132,9 @@ The following settings are required for any of this to make sense:
 * **Base permissions** must be "None" so that organization membership does not
   grant visibility of private repositories (if any exist) and repository
   access is determined exclusively through teams.
-* **Repository creation** must be disabled for both Public and Private so that
-  all repository management shall be done through this repo.
+* **Repository creation** and **Pages creation** must be disabled for both
+  Public and Private so that all repository management shall be done through
+  this repo.
 * **Allow members to create teams** must be disabled so that all team
   administration shall be done through this repo.
 
@@ -149,7 +150,6 @@ prevent further damage if someone does manage to escalate:
 
 These settings probably won't have much impact:
 
-* **Pages creation** can be allowed for Public repositories.
 * **Allow forking of private repositories** should be disabled just to keep
   access tidy.
 * **Allow users with read access to create discussions** is confusingly under

@@ -38,6 +38,7 @@ resource "github_repository" "repos" {
   #   terraform apply
   topics = try(each.value.topics, [])
 
+  homepage_url = try(each.value.homepage_url, null)
   has_issues = try(each.value.has_issues, true)
   has_projects = try(each.value.has_projects, false)
   has_wiki = try(each.value.has_wiki, false)
@@ -46,6 +47,18 @@ resource "github_repository" "repos" {
   has_downloads = false
 
   archive_on_destroy = true
+
+  dynamic "pages" {
+    for_each = try([each.value.pages], [])
+
+    content {
+      cname = pages.value.cname
+      source {
+        branch = pages.value.branch
+        path = try(pages.value.path, null)
+      }
+    }
+  }
 }
 
 resource "github_team_membership" "members" {
