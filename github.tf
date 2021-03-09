@@ -38,7 +38,7 @@ resource "github_repository" "repos" {
   topics = try(each.value.topics, [])
 
   homepage_url = try(each.value.homepage_url, null)
-  has_issues = try(each.value.has_issues, true)
+  has_issues = try(each.value.has_issues, false)
   has_projects = try(each.value.has_projects, false)
   has_wiki = try(each.value.has_wiki, false)
 
