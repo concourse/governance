@@ -54,11 +54,13 @@ func (state GitHubState) Repo(name string) (GitHubRepo, bool) {
 }
 
 type GitHubOrgMember struct {
+	Name  string
 	Login string
 	Role  OrgRole
 }
 
 type GitHubTeam struct {
+	ID          int
 	Name        string
 	Description string
 	Members     []GitHubTeamMember
@@ -79,6 +81,7 @@ type GitHubRepo struct {
 	Name                string
 	Description         string
 	Topics              []string
+	HomepageURL         string
 	HasIssues           bool
 	HasWiki             bool
 	HasProjects         bool
@@ -128,6 +131,59 @@ func LoadGitHubState(orgName string) (*GitHubState, error) {
 	return org, nil
 }
 
+func (state *GitHubState) ImpliedConfig() Config {
+	config := Config{
+		Contributors: map[string]Person{},
+		Teams:        map[string]Team{},
+		Repos:        map[string]Repo{},
+	}
+
+	for _, member := range state.Members {
+		config.Contributors[member.Login] = Person{
+			Name:   member.Name,
+			GitHub: member.Login,
+			Admin:  member.Role == OrgRoleAdmin,
+		}
+	}
+
+	for _, t := range state.Teams {
+		team := Team{
+			Name:    t.Name,
+			Purpose: t.Description,
+		}
+
+		for _, member := range t.Members {
+			team.Members = append(team.Members, member.Login)
+		}
+
+		for _, repo := range t.Repos {
+			if repo.Permission != RepoPermissionMaintain {
+				// this model only sets teams up with Maintain permission, so skip
+				// anything else
+				continue
+			}
+
+			team.Repos = append(team.Repos, repo.Name)
+		}
+
+		config.Teams[team.Name] = team
+	}
+
+	for _, repo := range state.Repos {
+		config.Repos[repo.Name] = Repo{
+			Name:        repo.Name,
+			Description: repo.Description,
+			Topics:      repo.Topics,
+			HomepageURL: repo.HomepageURL,
+			HasIssues:   repo.HasIssues,
+			HasProjects: repo.HasProjects,
+			HasWiki:     repo.HasWiki,
+		}
+	}
+
+	return config
+}
+
 func (state *GitHubState) LoadMembers(ctx context.Context, client *githubv4.Client) error {
 	args := map[string]interface{}{
 		"org":   githubv4.String(state.Organization),
@@ -142,6 +198,7 @@ func (state *GitHubState) LoadMembers(ctx context.Context, client *githubv4.Clie
 					Edges []struct {
 						Role string
 						Node struct {
+							Name  string
 							Login string
 						}
 					}
@@ -159,6 +216,7 @@ func (state *GitHubState) LoadMembers(ctx context.Context, client *githubv4.Clie
 
 		for _, edge := range membersQ.Organization.Members.Edges {
 			state.Members = append(state.Members, GitHubOrgMember{
+				Name:  edge.Node.Name,
 				Login: edge.Node.Login,
 				Role:  OrgRole(edge.Role),
 			})
@@ -180,6 +238,7 @@ func (state *GitHubState) LoadTeams(ctx context.Context, client *githubv4.Client
 			Teams struct {
 				Nodes []struct {
 					Name        string
+					DatabaseId  int
 					Description string
 
 					Members struct {
@@ -212,6 +271,7 @@ func (state *GitHubState) LoadTeams(ctx context.Context, client *githubv4.Client
 
 	for _, node := range teamsQ.Organization.Teams.Nodes {
 		team := GitHubTeam{
+			ID:          node.DatabaseId,
 			Name:        node.Name,
 			Description: node.Description,
 		}

@@ -3,6 +3,7 @@ package governance
 import (
 	"fmt"
 	"io/fs"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -125,6 +126,7 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 		}
 
 		state.Members = append(state.Members, GitHubOrgMember{
+			Name:  person.Name,
 			Login: person.GitHub,
 			Role:  role,
 		})
@@ -171,4 +173,83 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 	}
 
 	return state
+}
+
+func (config Config) SyncMissing(dest string) error {
+	for name, person := range config.Contributors {
+		filePath := filepath.Join(dest, "contributors", name+".yml")
+
+		_, err := os.Stat(filePath)
+		if err == nil {
+			continue
+		}
+
+		if !os.IsNotExist(err) {
+			return err
+		}
+
+		payload, err := yaml.Marshal(person)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("syncing missing contributor: %s\n", name)
+
+		err = os.WriteFile(filePath, payload, 0644)
+		if err != nil {
+			return err
+		}
+	}
+
+	for name, team := range config.Teams {
+		filePath := filepath.Join(dest, "teams", name+".yml")
+
+		_, err := os.Stat(filePath)
+		if err == nil {
+			continue
+		}
+
+		if !os.IsNotExist(err) {
+			return err
+		}
+
+		payload, err := yaml.Marshal(team)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("syncing missing team: %s\n", name)
+
+		err = os.WriteFile(filePath, payload, 0644)
+		if err != nil {
+			return err
+		}
+	}
+
+	for name, repo := range config.Repos {
+		filePath := filepath.Join(dest, "repos", name+".yml")
+
+		_, err := os.Stat(filePath)
+		if err == nil {
+			continue
+		}
+
+		if !os.IsNotExist(err) {
+			return err
+		}
+
+		payload, err := yaml.Marshal(repo)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("syncing missing repo: %s\n", name)
+
+		err = os.WriteFile(filePath, payload, 0644)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
