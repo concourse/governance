@@ -1,0 +1,6 @@
+name: lfs-test-repo
+description: this repo is a fixture for testing the git resource's LFS functionality
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true

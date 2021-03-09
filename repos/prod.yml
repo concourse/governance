@@ -1,0 +1,10 @@
+name: prod
+description: bosh/terraform config for our deployments
+topics:
+- bosh
+- terraform
+- credhub
+- vault
+has_issues: true
+has_projects: true
+has_wiki: true

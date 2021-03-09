@@ -1,0 +1,7 @@
+name: retryhttp
+description: Retryable http transport used by baggageclaim client and garden client
+  in ATC
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true

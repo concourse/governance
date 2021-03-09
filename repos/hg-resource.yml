@@ -1,0 +1,6 @@
+name: hg-resource
+description: Mercurial resource for Concourse
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true

@@ -1,0 +1,6 @@
+name: release-test
+description: Dry run before releasing
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true

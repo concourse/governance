@@ -1,0 +1,6 @@
+name: github-release-resource
+description: a resource for github releases
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true

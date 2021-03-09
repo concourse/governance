@@ -1,0 +1,17 @@
+name: concourse
+description: Concourse is a container-based continuous thing-doer written in Go and
+  Elm.
+topics:
+- go
+- ci
+- pipelines
+- elm
+- concourse
+- continuous-integration
+- continuous-delivery
+- ci-cd
+- hacktoberfest
+homepage_url: https://concourse-ci.org
+has_issues: true
+has_projects: true
+has_wiki: true

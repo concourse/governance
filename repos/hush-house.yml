@@ -1,0 +1,10 @@
+name: hush-house
+description: Concourse k8s-based environment
+topics:
+- concourse
+- kubernetes
+- helm
+homepage_url: https://hush-house.pivotal.io
+has_issues: true
+has_projects: true
+has_wiki: true

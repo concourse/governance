@@ -1,0 +1,5 @@
+name: pipelines
+description: 'A collection of pipelines used by the Concourse Team '
+topics: []
+has_issues: false
+has_projects: true

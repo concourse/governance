@@ -1,0 +1,6 @@
+name: bosh-io-release-resource
+description: tracks BOSH releases published on https://bosh.io
+topics: []
+has_issues: true
+has_projects: true
+has_wiki: true
