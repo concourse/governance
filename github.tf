@@ -1,15 +1,9 @@
-# TODO: discord roles too
-#
-# org member = contributor role
-# org owner = admin role
-# team maps to team in discord
+resource "github_membership" "contributors" {
+  for_each = local.contributors
 
-# resource "github_membership" "org" {
-#   for_each = local.people
-
-#   username = each.value.github
-#   role = each.value.admin ? "admin" : "member"
-# }
+  username = each.value.github
+  role = try(each.value.admin, false) ? "admin" : "member"
+}
 
 resource "github_team" "teams" {
   for_each = local.teams

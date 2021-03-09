@@ -30,7 +30,7 @@ func main() {
 
 	for _, member := range config.Contributors {
 		tf.Import(
-			fmt.Sprintf("github_membership.org[%q]", member.GitHub),
+			fmt.Sprintf("github_membership.contributors[%q]", member.GitHub),
 			organization+":"+member.GitHub,
 		)
 	}
