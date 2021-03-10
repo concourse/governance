@@ -26,7 +26,7 @@ locals {
 
   team_repos = flatten([
     for teamname, team in local.teams : [
-      for repo in team.repos : {
+      for repo in try(team.repos, []) : {
         team_name = team.name
         repository = repo
         permission = "maintain"
