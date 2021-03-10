@@ -2,15 +2,16 @@ resource "github_membership" "contributors" {
   for_each = local.contributors
 
   username = each.value.github
-  role = "member"
+  role     = "member"
 }
 
 resource "github_team" "teams" {
   for_each = local.teams
 
-  name = each.value.name
+  name        = each.value.name
   description = trimspace(join(" ", split("\n", each.value.purpose)))
-  privacy = "closed"
+  privacy     = "closed"
+
   create_default_maintainer = false
 
   # TODO: remove once we remove the old team hierarchy
@@ -22,7 +23,7 @@ resource "github_team" "teams" {
 resource "github_repository" "repos" {
   for_each = local.repos
 
-  name = each.value.name
+  name        = each.value.name
   description = trimspace(join(" ", split("\n", each.value.description)))
 
   visibility = try(each.value.private, false) ? "private" : "public"
@@ -40,9 +41,9 @@ resource "github_repository" "repos" {
   topics = try(each.value.topics, [])
 
   homepage_url = try(each.value.homepage_url, null)
-  has_issues = try(each.value.has_issues, false)
+  has_issues   = try(each.value.has_issues, false)
   has_projects = try(each.value.has_projects, false)
-  has_wiki = try(each.value.has_wiki, false)
+  has_wiki     = try(each.value.has_wiki, false)
 
   # this was deprecated in 2013 but still defaults to true?
   has_downloads = false
@@ -51,7 +52,7 @@ resource "github_repository" "repos" {
   archive_on_destroy = true
 
   # sane defaults
-  vulnerability_alerts = true
+  vulnerability_alerts   = true
   delete_branch_on_merge = true
 
   dynamic "pages" {
@@ -61,7 +62,7 @@ resource "github_repository" "repos" {
       cname = pages.value.cname
       source {
         branch = pages.value.branch
-        path = try(pages.value.path, null)
+        path   = try(pages.value.path, null)
       }
     }
   }
@@ -70,21 +71,21 @@ resource "github_repository" "repos" {
 resource "github_team_membership" "members" {
   for_each = {
     for membership in local.team_memberships :
-      "${membership.team_name}:${membership.username}" => membership
+    "${membership.team_name}:${membership.username}" => membership
   }
 
-  team_id = github_team.teams[each.value.team_name].id
+  team_id  = github_team.teams[each.value.team_name].id
   username = each.value.username
-  role = each.value.role
+  role     = each.value.role
 }
 
 resource "github_team_repository" "repos" {
   for_each = {
     for ownership in local.team_repos :
-      "${ownership.team_name}:${ownership.repository}" => ownership
+    "${ownership.team_name}:${ownership.repository}" => ownership
   }
 
-  team_id = github_team.teams[each.value.team_name].id
+  team_id    = github_team.teams[each.value.team_name].id
   repository = github_repository.repos[each.value.repository].name
   permission = each.value.permission
 }
