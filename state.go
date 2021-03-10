@@ -33,6 +33,16 @@ type GitHubState struct {
 	Repos   []GitHubRepo
 }
 
+func (state GitHubState) Member(login string) (GitHubOrgMember, bool) {
+	for _, member := range state.Members {
+		if member.Login == login {
+			return member, true
+		}
+	}
+
+	return GitHubOrgMember{}, false
+}
+
 func (state GitHubState) Team(name string) (GitHubTeam, bool) {
 	for _, team := range state.Teams {
 		if team.Name == name {
@@ -65,6 +75,26 @@ type GitHubTeam struct {
 	Description string
 	Members     []GitHubTeamMember
 	Repos       []GitHubTeamRepoAccess
+}
+
+func (team GitHubTeam) Member(login string) (GitHubTeamMember, bool) {
+	for _, member := range team.Members {
+		if member.Login == login {
+			return member, true
+		}
+	}
+
+	return GitHubTeamMember{}, false
+}
+
+func (team GitHubTeam) Repo(name string) (GitHubTeamRepoAccess, bool) {
+	for _, repo := range team.Repos {
+		if repo.Name == name {
+			return repo, true
+		}
+	}
+
+	return GitHubTeamRepoAccess{}, false
 }
 
 type GitHubTeamMember struct {

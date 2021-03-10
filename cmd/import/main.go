@@ -28,6 +28,11 @@ func main() {
 	}
 
 	for _, member := range config.Contributors {
+		_, found := state.Member(member.GitHub)
+		if !found {
+			continue
+		}
+
 		tf.Import(
 			fmt.Sprintf("github_membership.contributors[%q]", member.GitHub),
 			organization+":"+member.GitHub,
@@ -35,6 +40,11 @@ func main() {
 	}
 
 	for _, repo := range config.Repos {
+		_, found := state.Repo(repo.Name)
+		if !found {
+			continue
+		}
+
 		tf.Import(
 			fmt.Sprintf("github_repository.repos[%q]", repo.Name),
 			repo.Name,
@@ -53,6 +63,11 @@ func main() {
 		)
 
 		for _, member := range team.Members {
+			_, found := actualTeam.Member(member)
+			if !found {
+				continue
+			}
+
 			tf.Import(
 				fmt.Sprintf("github_team_membership.members[%q]", team.Name+":"+member),
 				strconv.Itoa(actualTeam.ID)+":"+member,
@@ -60,6 +75,11 @@ func main() {
 		}
 
 		for _, repo := range team.Repos {
+			_, found := actualTeam.Repo(repo)
+			if !found {
+				continue
+			}
+
 			tf.Import(
 				fmt.Sprintf("github_team_repository.repos[%q]", team.Name+":"+repo),
 				strconv.Itoa(actualTeam.ID)+":"+repo,
