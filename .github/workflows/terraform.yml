@@ -42,6 +42,8 @@ jobs:
 
     - name: Terraform Import
       run: go run cmd/import/*.go
+      env:
+        GITHUB_TOKEN: ${{ secrets.ORG_ADMIN_GITHUB_TOKEN }}
 
     - name: Terraform Plan
       run: terraform plan -refresh=false
