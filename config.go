@@ -33,6 +33,7 @@ type Team struct {
 type Repo struct {
 	Name        string     `yaml:"name"`
 	Description string     `yaml:"description"`
+	Private     bool       `yaml:"private,omitempty"`
 	Topics      []string   `yaml:"topics,omitempty"`
 	HomepageURL string     `yaml:"homepage_url,omitempty"`
 	HasIssues   bool       `yaml:"has_issues,omitempty"`

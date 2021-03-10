@@ -80,6 +80,7 @@ type GitHubTeamRepoAccess struct {
 type GitHubRepo struct {
 	Name                string
 	Description         string
+	IsPrivate           bool
 	Topics              []string
 	HomepageURL         string
 	HasIssues           bool
@@ -173,6 +174,7 @@ func (state *GitHubState) ImpliedConfig() Config {
 		config.Repos[repo.Name] = Repo{
 			Name:        repo.Name,
 			Description: repo.Description,
+			Private:     repo.IsPrivate,
 			Topics:      repo.Topics,
 			HomepageURL: repo.HomepageURL,
 			HasIssues:   repo.HasIssues,
@@ -323,6 +325,7 @@ func (state *GitHubState) LoadRepos(ctx context.Context, client *githubv4.Client
 						HomepageURL string
 
 						IsArchived bool
+						IsPrivate  bool
 
 						HasIssuesEnabled   bool
 						HasProjectsEnabled bool
@@ -363,6 +366,7 @@ func (state *GitHubState) LoadRepos(ctx context.Context, client *githubv4.Client
 			repo := GitHubRepo{
 				Name:        node.Name,
 				Description: node.Description,
+				IsPrivate:   node.IsPrivate,
 				HomepageURL: node.HomepageURL,
 				HasIssues:   node.HasIssuesEnabled,
 				HasProjects: node.HasProjectsEnabled,

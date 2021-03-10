@@ -25,6 +25,8 @@ resource "github_repository" "repos" {
   name = each.value.name
   description = trimspace(join(" ", split("\n", each.value.description)))
 
+  visibility = try(each.value.private, false) ? "private" : "public"
+
   # TODO: this has caused errors with a newly created repo before. maybe an API
   # race condition?
   #

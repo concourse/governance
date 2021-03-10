@@ -1,6 +1,6 @@
 name: platform-automation-deployments
 description: Platform automation needs state of terraform files.
-topics: []
+private: true
 has_issues: true
 has_projects: true
 has_wiki: true
