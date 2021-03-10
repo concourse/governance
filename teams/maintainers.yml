@@ -16,19 +16,28 @@ responsibilities:
   user feedback as possible
 
 repos:
+# core components
 - concourse
 - baggageclaim
 - dex
-- retryhttp
 
+# team onboarding material (currently private as it contains VMware-specific
+# info)
+- boarding-pass
+
+# libraries
+- retryhttp
+- voyager
+
+# release infrastructure
 - ci
 - concourse-bosh-release
 - concourse-chart
 
-- boarding-pass
-
-# TODO: these go a bit beyond the scope - maybe someday this could be a
-# different team?
+# core resource types and marketplace website
+#
+# these go a bit beyond the scope - maybe someday this could be a different
+# team?
 - resource-types
 - resource-types-website
 - docker-image-resource
