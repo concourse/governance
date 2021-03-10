@@ -13,28 +13,40 @@ type Terraform struct {
 	state map[string]bool
 }
 
-func LoadTerraform() (*Terraform, error) {
+func LoadTerraform() (Terraform, error) {
 	out := new(bytes.Buffer)
+
+	tf := Terraform{
+		state: map[string]bool{},
+	}
+
+	_, err := os.Stat("terraform.tfstate")
+	if err != nil {
+		if os.IsNotExist(err) {
+			return tf, nil
+		}
+
+		return Terraform{}, err
+	}
 
 	list := exec.Command("terraform", "state", "list")
 	list.Stdout = out
 	list.Stderr = os.Stderr
 
-	err := list.Run()
+	err = list.Run()
 	if err != nil {
-		return nil, fmt.Errorf("terraform state list: %w", err)
+		return Terraform{}, fmt.Errorf("terraform state list: %w", err)
 	}
 
-	state := map[string]bool{}
 	for _, resource := range strings.Split(out.String(), "\n") {
 		if resource == "" {
 			continue
 		}
 
-		state[resource] = true
+		tf.state[resource] = true
 	}
 
-	return &Terraform{state}, nil
+	return tf, nil
 }
 
 func (tf Terraform) Import(resource, id string) {
