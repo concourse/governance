@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 
 	"github.com/concourse/governance"
@@ -11,16 +12,14 @@ import (
 const organization = "concourse"
 
 func main() {
+	config, err := governance.LoadConfig(os.DirFS("."))
+	if err != nil {
+		log.Fatalln("failed to load config:", err)
+	}
+
 	state, err := governance.LoadGitHubState(organization)
 	if err != nil {
 		log.Fatalln("failed to load GitHub state:", err)
-	}
-
-	config := state.ImpliedConfig()
-
-	err = config.SyncMissing(".")
-	if err != nil {
-		log.Fatalln("failed sync missing config:", err)
 	}
 
 	tf, err := LoadTerraform()
