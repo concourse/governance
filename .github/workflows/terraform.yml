@@ -22,6 +22,7 @@ jobs:
       uses: hashicorp/setup-terraform@v1
       with:
         terraform_version: 0.14.7
+        terraform_wrapper: false
 
     - name: Setup Go
       uses: actions/setup-go@v2
