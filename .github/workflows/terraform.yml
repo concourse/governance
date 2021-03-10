@@ -48,7 +48,7 @@ jobs:
         key: terraform-state
 
     - name: Terraform Import
-      run: go run cmd/import/*.go
+      run: go run ./cmd/import
       env:
         GITHUB_TOKEN: ${{ secrets.ORG_ADMIN_GITHUB_TOKEN }}
 
