@@ -55,5 +55,5 @@ jobs:
     - name: Terraform Plan
       run: terraform plan -refresh=false
 
-    # - name: Terraform Apply
-    #   run: terraform apply -auto-approve -refresh=false
+    - name: Terraform Apply
+      run: terraform apply -auto-approve -refresh=false
