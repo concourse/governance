@@ -2,7 +2,7 @@ resource "github_membership" "contributors" {
   for_each = local.contributors
 
   username = each.value.github
-  role = try(each.value.admin, false) ? "admin" : "member"
+  role = "member"
 }
 
 resource "github_team" "teams" {

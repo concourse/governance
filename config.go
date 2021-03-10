@@ -20,7 +20,6 @@ type Person struct {
 	Name    string `yaml:"name"`
 	GitHub  string `yaml:"github"`
 	Discord string `yaml:"discord,omitempty"`
-	Admin   bool   `yaml:"admin,omitempty"`
 }
 
 type Team struct {
@@ -129,15 +128,10 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 	var state GitHubState
 
 	for _, person := range cfg.Contributors {
-		role := OrgRoleMember
-		if person.Admin {
-			role = OrgRoleAdmin
-		}
-
 		state.Members = append(state.Members, GitHubOrgMember{
 			Name:  person.Name,
 			Login: person.GitHub,
-			Role:  role,
+			Role:  OrgRoleMember,
 		})
 	}
 
@@ -148,14 +142,9 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 		}
 
 		for _, m := range team.Members {
-			role := TeamRoleMember
-			if cfg.Contributors[m].Admin {
-				role = TeamRoleMaintainer
-			}
-
 			ghTeam.Members = append(ghTeam.Members, GitHubTeamMember{
 				Login: m,
-				Role:  role,
+				Role:  TeamRoleMember,
 			})
 		}
 

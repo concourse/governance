@@ -143,7 +143,6 @@ func (state *GitHubState) ImpliedConfig() Config {
 		config.Contributors[member.Login] = Person{
 			Name:   member.Name,
 			GitHub: member.Login,
-			Admin:  member.Role == OrgRoleAdmin,
 		}
 	}
 
@@ -217,10 +216,15 @@ func (state *GitHubState) LoadMembers(ctx context.Context, client *githubv4.Clie
 		}
 
 		for _, edge := range membersQ.Organization.Members.Edges {
+			role := OrgRole(edge.Role)
+			if role == OrgRoleAdmin {
+				continue
+			}
+
 			state.Members = append(state.Members, GitHubOrgMember{
 				Name:  edge.Node.Name,
 				Login: edge.Node.Login,
-				Role:  OrgRole(edge.Role),
+				Role:  role,
 			})
 		}
 
