@@ -46,10 +46,7 @@ jobs:
       with:
         path: terraform.tfstate
         key: terraform-state-${{ github.sha }}
-        # TODO: add a hyphen so it's clearer that this is a prefix
-        #
-        # (saving for a later commit so I can verify the cache hit)
-        restore-keys: terraform-state
+        restore-keys: terraform-state-
 
     - name: Terraform Import
       run: go run ./cmd/import
@@ -57,7 +54,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.ORG_ADMIN_GITHUB_TOKEN }}
 
     - name: Terraform Plan
-      run: terraform plan
+      run: terraform plan -out=tfplan
 
     - name: Terraform Apply
-      run: terraform apply -auto-approve -refresh=false
+      run: terraform apply tfplan
