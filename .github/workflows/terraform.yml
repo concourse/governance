@@ -34,11 +34,17 @@ jobs:
     - name: Terraform Format
       run: terraform fmt -check
 
-    - name: Setup Vars
+    - name: Setup Terraform Vars
       run: |
         cat > .auto.tfvars <<EOF
         github_token = "${{ secrets.ORG_ADMIN_GITHUB_TOKEN}}"
         EOF
+
+    - name: Setup Terraform State
+      uses: actions/cache@v2
+      with:
+        path: terraform.tfstate
+        key: terraform-state
 
     - name: Terraform Import
       run: go run cmd/import/*.go
