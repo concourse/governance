@@ -1,17 +1,55 @@
 # Concourse Governance
 
-This repository codifies the roles and permissions within the Concourse project
-and contains the code to apply them via [Terraform](https://www.terraform.io/).
+This document outlines a set of policies in order to provide a level playing
+field and open process for contributors to join the Concourse project.
+
+In addition to this document, this repository contains live configuration for
+the state of the Concourse GitHub organization. All configuration is
+automatically applied via [Terraform][terraform] and synchronized daily to
+prevent drift.
+
+[terraform]: https://www.terraform.io/
+
+## Governance Model
+
+Individual contributors to the Concourse project can become members of
+**teams**, each with a stated purpose, a clear set of responsibilities, and a
+list of repos that they maintain.
+
+Teams collaborate through discussions on GitHub and propose changes through
+pull requests that may cross team boundaries.
+
+Ideally, teams should be split along boundaries that enhance the focus given to
+different facets of the Concourse project. Repositories should typically belong
+to a single team in order to encourage advocacy for different facets through
+collaboration.
+
+For example:
+
+* the [**core** team](teams/core.yml) has authority over the [RFC
+  process][rfcs-repo] and associated design principles, but cannot directly
+  push to the the [Concourse repo][concourse-repo].
+* the [**maintainers** team](teams/maintainers.yml) has authority over the
+  [Concourse repo][concourse-repo] and submits RFCs to develop a roadmap that
+  aligns with Concourse's core design principles.
+* the **core** team engages with the **maintainers** team to ensure new
+  proposals do not introduce unnecessary risk or become a maintenance burden.
+* the **maintainers** team then guides the planning and implementation of the
+  proposal through pull requests to the Concourse repo.
+
+Teams may split off from larger teams as more of these boundaries are
+discovered. Careful attention should be paid to teams with too many
+responsibilities - there may be significant facets being neglected.
+
+[rfcs-repo]: https://github.com/concourse/rfcs
+[concourse-repo]: https://github.com/concourse/concourse
 
 
-## Individual Contributors
+### Individual Contributors
 
-Individual contributors are listed under `./contributors` - feel free to submit
-a PR adding yourself!
-
-Each contributor will be granted mermbership of the Concourse GitHub
-organization. This does not grant much on its own; repository access for
-example is determined through teams.
+Individual contributors are listed under `./contributors`. Pull requests will
+be reviewed by members of the **community** team. Feel free to submit one at
+any time!
 
 Each `./contributors/*.yml` file has the following fields:
 
@@ -21,36 +59,20 @@ Each `./contributors/*.yml` file has the following fields:
 * `discord` - the contributor's Discord username + number, e.g. `foo#123`
 * `admin` - whether the contributor will be an admin of the organization.
 
-Pull requests to `./contributors` will be reviewed by members of the
-**@concourse/community** team.
+Each contributor will be granted membership of the Concourse GitHub
+organization. This does not grant much on its own; repository access for
+example is determined through teams.
+
+> Note: the Discord attribute is not used at the moment, but it may be helpful
+> in the future to have someplace that correlates these different identities.
 
 
-## Teams
 
-Teams are listed under `./teams`. Each team must have a stated purpose
-summarizing its goals.
+### Teams
 
-New teams may be formed at any time by submitting a PR. A team with only one
-member is probably not a good sign, so try to recruit folks during this stage.
-
-Each team lists its members which correspond to filenames under
-`./contributors` (without the `.yml`).
-
-Each team lists GitHub repositories for which the team will be granted
-the [`maintain` permission][permissions].
-
-Teams do not have designated leadership, though there may be a reason to add
-this someday. It is assumed that decisions are made through consensus among the
-team.
-
-Each team is responsible for determining the best way for the team to operate,
-though it a requirement that each team work in the open, either on GitHub or
-somewhere easy to access.
-
-Each team is responsible for maintaining a list of its responsibilities. (No
-need to list that one.) This clarifies the scope of a team for newcomers and to
-makes it easier to notice when a team is overloaded and could benefit from
-being divided or reorganized.
+Teams are listed under `./teams`. Pull requests will be reviewed by the
+**community** team, who will further request reviews from all affected teams or
+individuals. (This can probably be automated at some point.)
 
 Each `./teams/*.yml` file has the following fields:
 
@@ -62,15 +84,60 @@ Each `./teams/*.yml` file has the following fields:
   `./contributors/foo.yml`.
 * `repos` - a list of GitHub repositories for the team to be added to.
 
-Pull requests to `./teams` will be reviewed by the **@concourse/community**
-team, the affected teams, and any members being added to a team.
+Each team must have a stated purpose summarizing its goals.
+
+Each team is also responsible for maintaining a list of its responsibilities.
+(No need to list that one.) Doing so clarifies the scope of a team for
+newcomers and makes it easier to tell when a team is overloaded and could
+benefit from being divided or reorganized.
+
+Each team lists its members which correspond to filenames under
+`./contributors` (without the `.yml`).
+
+Each team lists GitHub repositories for which the team will be granted
+the [Maintain permission][permissions].
+
+Each team is responsible for determining the best way for the team to operate,
+though it is strongly encouraged that each team work in the open, either on
+GitHub or somewhere easy to access, to the extent that doing so is beneficial
+to the team and to the community.
+
+Decisions are reached through consensus among the team through a 66%+
+supermajority unless stated otherwise through the team's own processes.
+(Implementation of said process would require a 66% supermajority.)
+
+Teams currently do not require designated leaders, though there may be a reason
+to add this someday.
 
 [permissions]: https://docs.github.com/en/github/setting-up-and-managing-organizations-and-teams/repository-permission-levels-for-an-organization
 
 
-## Repositories
+#### Joining a Team
 
-Repositories are listed under `./repos`.
+To propose the addition of a team member (either yourself or on behalf of
+someone else), submit a PR that adds them as a contributor (if needed) and
+lists them as a member of the desired team.
+
+There are no specific qualifications for joining a team - being accepted into a
+team is entirely subjective and the barrier to entry will vary from team to
+team. Applications with no prior context or trust to build upon will almost
+certainly be rejected.
+
+
+#### Creating a new Team
+
+New teams may be formed at any time by submitting a PR. A team with only one
+member is probably not a good sign, so try to recruit folks during this stage.
+
+If a new team is being created to split off from a larger team, you will have
+to negotiate ownership of the relevant repos and ideally move them entirely to
+the new team. This will obviously require approval from the original team.
+
+
+### Repositories
+
+Repositories are listed under `./repos`. Pull requests will be reviewed by the
+**infrastructure** team.
 
 Each `./repos/*.yml` file has the following fields:
 
@@ -93,10 +160,8 @@ All repositories are configured to [delete branches][delete_branches] once
 their PR is merged.
 
 All repositories will be archived upon deletion from this repo (instead of
-being deleted). Permanent deletion must be done manually by an administrator.
-
-Pull requests to `./repos` will be reviewed by the
-**@concourse/infrastructure** team.
+being deleted). Permanent deletion must be done manually by a member of the
+**infrastructure** team.
 
 [vulnerability_alerts]: https://docs.github.com/en/github/managing-security-vulnerabilities/about-alerts-for-vulnerable-dependencies
 [delete_branches]: https://docs.github.com/en/github/administering-a-repository/managing-the-automatic-deletion-of-branches
@@ -113,7 +178,17 @@ Pull requests to this process (`README.md`) will be reviewed by the
 **core** team.
 
 
-## Applying Changes
+## Enforcing the Governance Model
+
+The configuration in this repository is applied automatically via Terraform.
+
+In addition to the Terraform configuration, the state of the entire GitHub
+organization can be tested against the desired state via `go test`. This test
+suite will also detect any 'extra' configuration like untracked repositories,
+unknown teams, and extra repository collaborators.
+
+
+### Applying Changes
 
 To apply these changes you must be an Owner of the Concourse GitHub
 organization.
@@ -129,7 +204,7 @@ $ terraform apply
 This token must have *admin:org* and *repo* scopes.
 
 
-## Testing Actual vs. Desired State
+### Testing Actual vs. Desired State
 
 Tests are included which will verify that all permissions in the relevant
 services reflect the configuration in the repository.
@@ -145,7 +220,7 @@ Test failures must be addressed immediately as they may indicate abuse, though
 laziness or ignorance of this process is more likely.
 
 
-## GitHub Organization Settings
+### GitHub Organization Settings
 
 This governance model requires that organization members have extremely limited
 [privileges][member-privileges]. Unfortunately these can't currently be set by
