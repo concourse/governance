@@ -5,6 +5,7 @@ purpose: |
   the RFC process.
 
 responsibilities:
+- develop the governance model
 - review RFCs or delegate their review to a more relevant team
 - maintain Concourse's design principles through the RFC review process
 - clarify Concourse's design principles over time
@@ -18,4 +19,5 @@ members:
 - vito
 
 repos:
+- governance
 - rfcs

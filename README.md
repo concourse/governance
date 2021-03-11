@@ -110,7 +110,7 @@ Pull requests to `./repos` will be reviewed by the
 > remove this disclaimer once we feel more confident. - **@vito**
 
 Pull requests to this process (`README.md`) will be reviewed by the
-**@concourse/community** team.
+**core** team.
 
 
 ## Applying Changes

@@ -1,4 +1,4 @@
 contributors/*.yml  @concourse/community
 teams/*.yml         @concourse/community
-README.md           @concourse/community
+README.md           @concourse/core
 repos/*.yml         @concourse/infrastructure
