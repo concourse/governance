@@ -143,6 +143,8 @@ func main() {
 			if err != nil {
 				logger.Fatal("failed to create role", zap.Error(err))
 			}
+
+			roleIDToName[teamRole.ID] = roleName
 		}
 
 		var permissions int64
