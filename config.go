@@ -187,6 +187,10 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 	}
 
 	for _, team := range cfg.Teams {
+		if team.Legacy {
+			continue
+		}
+
 		ghTeam := GitHubTeam{
 			Name:        team.Name,
 			Description: strings.TrimSpace(strings.Join(strings.Split(team.Purpose, "\n"), " ")),
