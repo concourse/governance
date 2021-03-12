@@ -1,6 +1,5 @@
 name: governance
 description: Documentation and automation for the Concourse project governance model.
-private: true
 topics:
 - governance
 has_issues: true
