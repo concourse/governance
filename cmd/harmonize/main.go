@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 	"sort"
-	"strings"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/concourse/governance"
@@ -13,9 +12,6 @@ import (
 
 // Concourse Discord server ID
 const guildID = "219899946617274369"
-
-// suffix applied to team-based roles
-const teamRoleSuffix = "-team"
 
 // role granted to all contributors
 const contributorsRole = "contributors"
@@ -158,8 +154,14 @@ func main() {
 		}
 	}
 
+	teamRoles := map[string]bool{}
 	for position, team := range teams {
-		roleName := team.Name + teamRoleSuffix
+		roleName := team.Discord.Role
+		if roleName == "" {
+			roleName = team.Name + "-team"
+		}
+
+		teamRoles[roleName] = true
 
 		logger := logger.With(
 			zap.String("team", team.Name),
@@ -301,7 +303,7 @@ func main() {
 				continue
 			}
 
-			if !strings.HasSuffix(roleName, teamRoleSuffix) {
+			if !teamRoles[roleName] {
 				// only team roles are removed.
 				//
 				// removing other roles can be done once there's a general process for

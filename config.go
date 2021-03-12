@@ -39,6 +39,7 @@ type Team struct {
 }
 
 type Discord struct {
+	Role        string   `yaml:"role,omitempty"`
 	Color       int      `yaml:"color,omitempty"`
 	Priority    int      `yaml:"priority,omitempty"`
 	Permissions []string `yaml:"permissions,omitempty"`

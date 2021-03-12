@@ -65,5 +65,6 @@ repos:
 - mock-resource
 
 discord:
+  role: maintainers
   color: 0xffcb01
   priority: 99
