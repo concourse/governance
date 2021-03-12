@@ -44,7 +44,12 @@ func main() {
 
 	defer logger.Sync()
 
-	session, err := discordgo.New("Bot " + os.Getenv("DISCORD_TOKEN"))
+	token := os.Getenv("DISCORD_TOKEN")
+	if token == "" {
+		logger.Fatal("no $DISCORD_TOKEN provided")
+	}
+
+	session, err := discordgo.New("Bot " + token)
 	if err != nil {
 		logger.Fatal("failed to initialize discord", zap.Error(err))
 	}

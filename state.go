@@ -3,7 +3,6 @@ package governance
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"os"
 	"strings"
 
@@ -127,18 +126,16 @@ type GitHubRepoCollaborator struct {
 func LoadGitHubState(orgName string) (*GitHubState, error) {
 	ctx := context.Background()
 
-	var tc *http.Client
-	var githubToken = os.Getenv("GITHUB_TOKEN")
-
-	if githubToken != "" {
-		ts := oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: githubToken},
-		)
-
-		tc = oauth2.NewClient(ctx, ts)
+	githubToken := os.Getenv("GITHUB_TOKEN")
+	if githubToken == "" {
+		return nil, fmt.Errorf("no $GITHUB_TOKEN provided")
 	}
 
-	client := githubv4.NewClient(tc)
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: githubToken},
+	)
+
+	client := githubv4.NewClient(oauth2.NewClient(ctx, ts))
 
 	org := &GitHubState{
 		Organization: orgName,
