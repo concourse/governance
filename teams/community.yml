@@ -17,3 +17,13 @@ repos:
 - docs
 - examples
 - governance
+
+discord:
+  color: 0x94c11f
+  priority: 50
+  added_permissions:
+  - MANAGE_CHANNELS
+  - MANAGE_MESSAGES
+  - KICK_MEMBERS
+  - BAN_MEMBERS
+  - VIEW_SERVER_INSIGHTS

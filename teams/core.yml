@@ -21,3 +21,7 @@ members:
 repos:
 - governance
 - rfcs
+
+discord:
+  color: 0x3398dc
+  priority: 100

@@ -53,3 +53,7 @@ repos:
 - hg-resource
 - datadog-event-resource
 - mock-resource
+
+discord:
+  color: 0xffcb01
+  priority: 99

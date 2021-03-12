@@ -18,3 +18,10 @@ repos:
 - hush-house
 - oxygen-mask
 - prod
+
+discord:
+  color: 0xb4ac94
+  priority: 10
+  added_permissions:
+  - MANAGE_SERVER
+  - MANAGE_ROLES
