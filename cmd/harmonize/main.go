@@ -17,6 +17,10 @@ const guildID = "219899946617274369"
 // suffix applied to team-based roles
 const teamRoleSuffix = "-team"
 
+// role granted to all contributors
+const contributorsRole = "contributors"
+const contributorsPosition = 1
+
 // defaults copied from newly created role; may be worth tuning later
 var teamRoleBasePermissions = []string{
 	"VIEW_CHANNEL",
@@ -60,6 +64,7 @@ func main() {
 	}
 
 	userIDToName := map[string]string{}
+	nameToUserID := map[string]string{}
 
 	discordMembers := []*discordgo.Member{}
 	after := ""
@@ -72,7 +77,11 @@ func main() {
 
 		for _, member := range members {
 			discordMembers = append(discordMembers, member)
-			userIDToName[member.User.ID] = member.User.String()
+
+			name := member.User.String()
+			userIDToName[member.User.ID] = name
+			nameToUserID[name] = member.User.ID
+
 			after = member.User.ID
 		}
 
@@ -99,12 +108,21 @@ func main() {
 		logger.Fatal("failed to get roles", zap.Error(err))
 	}
 
+	var roleOrder []*discordgo.Role
+
 	roleIDToName := map[string]string{}
+	roleNameToID := map[string]string{}
 	for _, role := range discordRoles {
 		roleIDToName[role.ID] = role.Name
+		roleNameToID[role.Name] = role.ID
+
+		if role.Name == contributorsRole {
+			// contributors role should have low position
+			role.Position = contributorsPosition
+			roleOrder = append(roleOrder, role)
+		}
 	}
 
-	var roleOrder []*discordgo.Role
 	var teams []governance.Team
 	for _, team := range config.Teams {
 		if team.Legacy {
@@ -118,6 +136,28 @@ func main() {
 	sort.Sort(byPriority(teams))
 
 	desiredUserRoles := map[string]map[string]bool{}
+	for _, contributor := range config.Contributors {
+		if contributor.Discord == "" {
+			continue
+		}
+
+		userID, found := nameToUserID[contributor.Discord]
+		if !found {
+			continue
+		}
+
+		roleID, found := roleNameToID[contributorsRole]
+		if !found {
+			logger.Error("contributors role does not exist")
+			continue
+		}
+
+		// all contributors are granted the 'contributors' role
+		desiredUserRoles[userID] = map[string]bool{
+			roleID: true,
+		}
+	}
+
 	for position, team := range teams {
 		roleName := team.Name + teamRoleSuffix
 
@@ -145,6 +185,7 @@ func main() {
 			}
 
 			roleIDToName[teamRole.ID] = roleName
+			roleNameToID[roleName] = teamRole.ID
 		}
 
 		var permissions int64
@@ -170,7 +211,7 @@ func main() {
 			log.Fatal("failed to update role", zap.Error(err))
 		}
 
-		teamRole.Position = position + 1
+		teamRole.Position = position + 1 + contributorsPosition
 		roleOrder = append(roleOrder, teamRole)
 
 		for _, member := range team.Members {
@@ -193,22 +234,16 @@ func main() {
 				zap.String("user", contributor.Discord),
 			)
 
-			var discordMember *discordgo.Member
-			for _, member := range discordMembers {
-				if member.User.String() == contributor.Discord {
-					discordMember = member
-				}
-			}
-
-			if discordMember == nil {
+			userID, found := nameToUserID[contributor.Discord]
+			if !found {
 				logger.Debug("user is not a member of the server")
 				continue
 			}
 
-			desiredRoles, found := desiredUserRoles[discordMember.User.ID]
+			desiredRoles, found := desiredUserRoles[userID]
 			if !found {
 				desiredRoles = map[string]bool{}
-				desiredUserRoles[discordMember.User.ID] = desiredRoles
+				desiredUserRoles[userID] = desiredRoles
 			}
 
 			desiredRoles[teamRole.ID] = true
@@ -259,7 +294,19 @@ func main() {
 				zap.String("role", roleName),
 			)
 
+			if roleName == contributorsRole {
+				// removing the 'contributors' role is more disruptive than it's worth,
+				// since almost all of them predate this process and don't have their
+				// Discord associated to a GitHub account.
+				continue
+			}
+
 			if !strings.HasSuffix(roleName, teamRoleSuffix) {
+				// only team roles are removed.
+				//
+				// removing other roles can be done once there's a general process for
+				// managing Discord roles - for now it's manual through the community
+				// team.
 				logger.Debug("ignoring non-team role")
 				continue
 			}
