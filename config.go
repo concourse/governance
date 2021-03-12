@@ -206,6 +206,7 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 		state.Repos = append(state.Repos, GitHubRepo{
 			Name:                repo.Name,
 			Description:         repo.Description,
+			IsPrivate:           repo.Private,
 			Topics:              repo.Topics,
 			HomepageURL:         repo.HomepageURL,
 			HasIssues:           repo.HasIssues,
