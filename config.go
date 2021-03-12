@@ -23,12 +23,19 @@ type Person struct {
 }
 
 type Team struct {
-	Name    string   `yaml:"name"`
-	Purpose string   `yaml:"purpose"`
-	Members []string `yaml:"members"`
-	Repos   []string `yaml:"repos"`
+	Name             string   `yaml:"name"`
+	Purpose          string   `yaml:"purpose"`
+	Responsibilities []string `yaml:"responsibilities"`
 
 	Discord Discord `yaml:"discord,omitempty"`
+
+	Members []string `yaml:"members"`
+
+	Repos []string `yaml:"repos,omitempty"`
+
+	// Legacy is set for teams that predated the governance model. These should
+	// be eventually deleted.
+	Legacy bool `yaml:"legacy,omitempty"`
 }
 
 type Discord struct {

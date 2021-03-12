@@ -12,7 +12,6 @@ import (
 )
 
 // Concourse Discord server ID
-//
 const guildID = "219899946617274369"
 
 // suffix applied to team-based roles
@@ -103,6 +102,11 @@ func main() {
 	var roleOrder []*discordgo.Role
 	var teams []governance.Team
 	for _, team := range config.Teams {
+		if team.Legacy {
+			// don't set up roles for legacy teams
+			continue
+		}
+
 		teams = append(teams, team)
 	}
 

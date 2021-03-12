@@ -13,3 +13,4 @@ members:
 - clarafu
 - aoldershaw
 repos: []
+legacy: true

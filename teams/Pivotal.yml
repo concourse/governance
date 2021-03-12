@@ -14,3 +14,4 @@ members:
 - aoldershaw
 repos:
 - vault-helm
+legacy: true
