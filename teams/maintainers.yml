@@ -41,6 +41,8 @@ repos:
 - concourse-bosh-release
 - concourse-chart
 
+- csi-driver-image-populator
+
 # core resource types and marketplace website
 #
 # these go a bit beyond the scope - maybe someday this could be a different
