@@ -193,7 +193,7 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 
 		ghTeam := GitHubTeam{
 			Name:        team.Name,
-			Description: strings.TrimSpace(strings.Join(strings.Split(team.Purpose, "\n"), " ")),
+			Description: sanitize(team.Purpose),
 		}
 
 		for _, m := range team.Members {
@@ -216,7 +216,7 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 	for _, repo := range cfg.Repos {
 		state.Repos = append(state.Repos, GitHubRepo{
 			Name:                repo.Name,
-			Description:         repo.Description,
+			Description:         sanitize(repo.Description),
 			IsPrivate:           repo.Private,
 			Topics:              repo.Topics,
 			HomepageURL:         repo.HomepageURL,
@@ -307,4 +307,9 @@ func (config Config) SyncMissing(dest string) error {
 	}
 
 	return nil
+}
+
+// collapse word-wrapped string YAML blocks
+func sanitize(str string) string {
+	return strings.TrimSpace(strings.Join(strings.Split(str, "\n"), " "))
 }
