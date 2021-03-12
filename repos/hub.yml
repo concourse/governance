@@ -1,6 +1,0 @@
-name: hub
-description: For the distributed charts search at hub.helm.sh
-topics: []
-homepage_url: https://hub.helm.sh
-has_issues: false
-has_projects: true

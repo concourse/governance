@@ -1,6 +1,0 @@
-name: test
-description: For concourse test uses.
-topics: []
-has_issues: true
-has_projects: true
-has_wiki: true

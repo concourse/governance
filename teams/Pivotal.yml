@@ -12,6 +12,4 @@ members:
 - chenbh
 - clarafu
 - aoldershaw
-repos:
-- vault-helm
 legacy: true
