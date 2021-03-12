@@ -23,6 +23,9 @@ Instructions for infrastructure team if this ever needs to be set up again:
 1. Under "OAuth2", check the `bot` scope, check the `Administrator` permission,
    and copy the URL.
     * Navigate to the URL in your browser and invite the bot to the server.
+1. After the bot has joined, drag their role to the highest level under "Roles"
+   in the server settings. This is necessary for the bot to be able to reorder
+   roles.
 
 At this point the bot should be a member of the server. It appears offline, so
 you'll have to manually check the member list.
