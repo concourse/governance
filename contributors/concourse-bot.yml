@@ -1,2 +1,21 @@
 name: Concourse Bot
 github: concourse-bot
+
+repos:
+  # publishing releases
+  concourse: push
+
+  # bumping resource-types submodule
+  resource-types-website: push
+
+  # bumping chart version
+  concourse-chart: push
+
+  # building and publishing boarding-pass website
+  boarding-pass: pull
+
+  # bumping versions to deploy from CI pipelines
+  greenpeace: push
+
+  # persisting environment state
+  platform-automation-deployments: push
