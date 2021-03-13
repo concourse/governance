@@ -19,3 +19,9 @@ repos:
 
   # persisting environment state
   platform-automation-deployments: push
+
+  # bumping blobs in CI pipeline
+  concourse-bosh-release: push
+
+  # bumping versions after we ship
+  concourse-bosh-deployment: push
