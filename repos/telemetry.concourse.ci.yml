@@ -1,6 +1,0 @@
-name: telemetry.concourse.ci
-description: app source for telemetry.concourse.ci
-topics: []
-has_issues: true
-has_projects: true
-has_wiki: true
