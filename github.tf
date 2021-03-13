@@ -89,3 +89,14 @@ resource "github_team_repository" "repos" {
   repository = github_repository.repos[each.value.repository].name
   permission = each.value.permission
 }
+
+resource "github_repository_collaborator" "collaborators" {
+  for_each = {
+    for c in local.repo_collaborators :
+    "${c.repository}:${c.username}" => c
+  }
+
+  repository = github_repository.repos[each.value.repository].name
+  username   = each.value.username
+  permission = each.value.permission
+}

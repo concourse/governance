@@ -37,6 +37,23 @@ func main() {
 			fmt.Sprintf("github_membership.contributors[%q]", member.GitHub),
 			organization+":"+member.GitHub,
 		)
+
+		for repo := range member.Repos {
+			actualRepo, found := state.Repo(repo)
+			if !found {
+				continue
+			}
+
+			_, found = actualRepo.Collaborator(member.GitHub)
+			if !found {
+				continue
+			}
+
+			tf.Import(
+				fmt.Sprintf("github_repository_collaborator.collaborators[%q]", repo+":"+member.GitHub),
+				repo+":"+member.GitHub,
+			)
+		}
 	}
 
 	for _, repo := range config.Repos {

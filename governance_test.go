@@ -37,10 +37,20 @@ func TestGitHub(t *testing.T) {
 					require.Equal(t, desiredRepo.HasIssues, actualRepo.HasIssues, "has issues")
 					require.Equal(t, desiredRepo.HasProjects, actualRepo.HasProjects, "has projects")
 					require.Equal(t, desiredRepo.HasWiki, actualRepo.HasWiki, "has wiki")
+					require.ElementsMatch(t, desiredRepo.DirectCollaborators, actualRepo.DirectCollaborators, "collaborators")
 				})
 
-				t.Run("has no collaborators", func(t *testing.T) {
-					require.Empty(t, actualRepo.DirectCollaborators)
+				t.Run("belongs to a team", func(t *testing.T) {
+					var belongs bool
+					for _, team := range desired.Teams {
+						for _, repo := range team.Repos {
+							if repo.Name == desiredRepo.Name {
+								belongs = true
+							}
+						}
+					}
+
+					require.True(t, belongs, "does not belong to any team")
 				})
 			})
 		}

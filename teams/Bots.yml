@@ -1,6 +1,0 @@
-name: Bots
-purpose: non-human users
-members:
-- concourse-bot
-repos: []
-legacy: true
