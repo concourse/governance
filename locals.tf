@@ -15,7 +15,7 @@ locals {
   }
 
   team_memberships = flatten([
-    for teamname, team in local.teams : [
+    for team in local.teams : [
       for person in team.members : {
         team_name = team.name
         username  = local.contributors[person].github
@@ -25,11 +25,21 @@ locals {
   ])
 
   team_repos = flatten([
-    for teamname, team in local.teams : [
+    for team in local.teams : [
       for repo in try(team.repos, []) : {
         team_name  = team.name
         repository = repo
         permission = "maintain"
+      }
+    ]
+  ])
+
+  repo_collaborators = flatten([
+    for contributor in local.contributors : [
+      for repo, permission in try(contributor.repos, {}) : {
+        repository = repo
+        username   = contributor.github
+        permission = permission
       }
     ]
   ])

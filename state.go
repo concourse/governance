@@ -118,6 +118,16 @@ type GitHubRepo struct {
 	DirectCollaborators []GitHubRepoCollaborator
 }
 
+func (repo GitHubRepo) Collaborator(login string) (GitHubRepoCollaborator, bool) {
+	for _, collaborator := range repo.DirectCollaborators {
+		if collaborator.Login == login {
+			return collaborator, true
+		}
+	}
+
+	return GitHubRepoCollaborator{}, false
+}
+
 type GitHubRepoCollaborator struct {
 	Login      string
 	Permission string
@@ -166,13 +176,6 @@ func (state *GitHubState) ImpliedConfig() Config {
 		Repos:        map[string]Repo{},
 	}
 
-	for _, member := range state.Members {
-		config.Contributors[member.Login] = Person{
-			Name:   member.Name,
-			GitHub: member.Login,
-		}
-	}
-
 	for _, t := range state.Teams {
 		team := Team{
 			Name:    t.Name,
@@ -196,6 +199,7 @@ func (state *GitHubState) ImpliedConfig() Config {
 		config.Teams[team.Name] = team
 	}
 
+	contributorRepos := map[string]map[string]string{}
 	for _, repo := range state.Repos {
 		config.Repos[repo.Name] = Repo{
 			Name:        repo.Name,
@@ -206,6 +210,24 @@ func (state *GitHubState) ImpliedConfig() Config {
 			HasIssues:   repo.HasIssues,
 			HasProjects: repo.HasProjects,
 			HasWiki:     repo.HasWiki,
+		}
+
+		for _, collaborator := range repo.DirectCollaborators {
+			repos, found := contributorRepos[collaborator.Login]
+			if !found {
+				repos = map[string]string{}
+				contributorRepos[collaborator.Login] = repos
+			}
+
+			repos[repo.Name] = permission4to3(collaborator.Permission)
+		}
+	}
+
+	for _, member := range state.Members {
+		config.Contributors[member.Login] = Person{
+			Name:   member.Name,
+			GitHub: member.Login,
+			Repos:  contributorRepos[member.Login],
 		}
 	}
 

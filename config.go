@@ -17,9 +17,10 @@ type Config struct {
 }
 
 type Person struct {
-	Name    string `yaml:"name"`
-	GitHub  string `yaml:"github"`
-	Discord string `yaml:"discord,omitempty"`
+	Name    string            `yaml:"name"`
+	GitHub  string            `yaml:"github"`
+	Discord string            `yaml:"discord,omitempty"`
+	Repos   map[string]string `yaml:"repos,omitempty"`
 }
 
 type Team struct {
@@ -179,12 +180,21 @@ func LoadConfig(tree fs.FS) (*Config, error) {
 func (cfg Config) DesiredGitHubState() GitHubState {
 	var state GitHubState
 
+	repoCollaborators := map[string][]GitHubRepoCollaborator{}
+
 	for _, person := range cfg.Contributors {
 		state.Members = append(state.Members, GitHubOrgMember{
 			Name:  person.Name,
 			Login: person.GitHub,
 			Role:  OrgRoleMember,
 		})
+
+		for repo, permission := range person.Repos {
+			repoCollaborators[repo] = append(repoCollaborators[repo], GitHubRepoCollaborator{
+				Login:      person.GitHub,
+				Permission: permission3to4(permission),
+			})
+		}
 	}
 
 	for _, team := range cfg.Teams {
@@ -224,7 +234,7 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 			HasIssues:           repo.HasIssues,
 			HasProjects:         repo.HasProjects,
 			HasWiki:             repo.HasWiki,
-			DirectCollaborators: []GitHubRepoCollaborator{},
+			DirectCollaborators: repoCollaborators[repo.Name],
 		})
 	}
 
@@ -313,4 +323,38 @@ func (config Config) SyncMissing(dest string) error {
 // collapse word-wrapped string YAML blocks
 func sanitize(str string) string {
 	return strings.TrimSpace(strings.Join(strings.Split(str, "\n"), " "))
+}
+
+func permission3to4(v3permission string) string {
+	switch v3permission {
+	case "pull":
+		return "READ"
+	case "push":
+		return "WRITE"
+	case "admin":
+		return "ADMIN"
+	case "maintain":
+		return "MAINTAIN"
+	case "triage":
+		return "TRIAGE"
+	default:
+		return "INVALID"
+	}
+}
+
+func permission4to3(v3permission string) string {
+	switch v3permission {
+	case "READ":
+		return "pull"
+	case "WRITE":
+		return "push"
+	case "ADMIN":
+		return "admin"
+	case "MAINTAIN":
+		return "maintain"
+	case "TRIAGE":
+		return "triage"
+	default:
+		return "invalid"
+	}
 }
