@@ -35,14 +35,21 @@ repos:
 
 # libraries
 - retryhttp
+- flag
 - voyager
+- go-archive
+
+# k8s runtime PoC repos
+- csi-driver-image-populator
+- csi-driver-host-path
 
 # release infrastructure
 - ci
 - concourse-bosh-release
 - concourse-chart
-
-- csi-driver-image-populator
+- concourse-docker
+- concourse-bosh-deployment
+- drills
 
 # core resource types and marketplace website
 #
@@ -52,6 +59,7 @@ repos:
 - resource-types-website
 - docker-image-resource
 - git-resource
+- lfs-test-repo # used by git-resource tests
 - semver-resource
 - s3-resource
 - github-release-resource
@@ -60,6 +68,7 @@ repos:
 - time-resource
 - tracker-resource
 - bosh-io-stemcell-resource
+- bosh-io-release-resource
 - hg-resource
 - datadog-event-resource
 - mock-resource
