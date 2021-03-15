@@ -25,5 +25,5 @@ repos:
 - rfcs
 
 discord:
-  color: 0x3398dc
+  color: 0xf93a2f
   priority: 100

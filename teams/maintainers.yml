@@ -82,5 +82,5 @@ repos:
 
 discord:
   role: maintainers
-  color: 0xffcb01
+  color: 0xf8c300
   priority: 99

@@ -21,7 +21,7 @@ repos:
 - governance
 
 discord:
-  color: 0x94c11f
+  color: 0xa652bb
   priority: 50
   added_permissions:
   - MANAGE_CHANNELS

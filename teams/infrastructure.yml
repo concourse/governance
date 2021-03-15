@@ -21,7 +21,7 @@ repos:
 - prod
 
 discord:
-  color: 0xb4ac94
+  color: 0x597e8d
   priority: 10
   added_permissions:
   - MANAGE_SERVER
