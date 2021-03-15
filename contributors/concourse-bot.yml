@@ -2,7 +2,7 @@ name: Concourse Bot
 github: concourse-bot
 
 repos:
-  # publishing releases
+  # publishing releases and updating PR status
   concourse: push
 
   # bumping resource-types submodule
@@ -25,3 +25,19 @@ repos:
 
   # bumping versions after we ship
   concourse-bosh-deployment: push
+
+  # updating PR/commit statuses
+  docker-image-resource: push
+  git-resource: push
+  semver-resource: push
+  s3-resource: push
+  github-release-resource: push
+  registry-image-resource: push
+  pool-resource: push
+  time-resource: push
+  tracker-resource: push
+  bosh-io-stemcell-resource: push
+  bosh-io-release-resource: push
+  hg-resource: push
+  datadog-event-resource: push
+  mock-resource: push
