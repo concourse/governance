@@ -40,10 +40,11 @@ type Team struct {
 }
 
 type Discord struct {
-	Role        string   `yaml:"role,omitempty"`
-	Color       int      `yaml:"color,omitempty"`
-	Priority    int      `yaml:"priority,omitempty"`
-	Permissions []string `yaml:"permissions,omitempty"`
+	Role     string `yaml:"role,omitempty"`
+	Color    int    `yaml:"color,omitempty"`
+	Priority int    `yaml:"priority,omitempty"`
+
+	AddedPermissions []string `yaml:"added_permissions,omitempty"`
 }
 
 // 1. copied from https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags

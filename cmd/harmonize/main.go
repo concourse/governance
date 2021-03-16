@@ -191,7 +191,7 @@ func main() {
 		}
 
 		var permissions int64
-		for _, permission := range append(teamRoleBasePermissions, team.Discord.Permissions...) {
+		for _, permission := range append(teamRoleBasePermissions, team.Discord.AddedPermissions...) {
 			bits, found := governance.DiscordPermissions[permission]
 			if !found {
 				logger.Error("unknown permission", zap.String("permission", permission))
