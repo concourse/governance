@@ -66,6 +66,13 @@ func main() {
 			fmt.Sprintf("github_repository.repos[%q]", repo.Name),
 			repo.Name,
 		)
+
+		for _, protection := range repo.BranchProtection {
+			tf.Import(
+				fmt.Sprintf("github_branch_protection.branch_protections[%q]", repo.Name+":"+protection.Pattern),
+				repo.Name+":"+protection.Pattern,
+			)
+		}
 	}
 
 	for _, team := range config.Teams {

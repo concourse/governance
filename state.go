@@ -107,15 +107,18 @@ type GitHubTeamRepoAccess struct {
 }
 
 type GitHubRepo struct {
-	Name                string
-	Description         string
-	IsPrivate           bool
-	Topics              []string
-	HomepageURL         string
-	HasIssues           bool
-	HasWiki             bool
-	HasProjects         bool
+	Name        string
+	Description string
+	IsPrivate   bool
+	Topics      []string
+	HomepageURL string
+	HasIssues   bool
+	HasWiki     bool
+	HasProjects bool
+
 	DirectCollaborators []GitHubRepoCollaborator
+
+	BranchProtectionRules []GitHubRepoBranchProtectionRule
 }
 
 func (repo GitHubRepo) Collaborator(login string) (GitHubRepoCollaborator, bool) {
@@ -131,6 +134,31 @@ func (repo GitHubRepo) Collaborator(login string) (GitHubRepoCollaborator, bool)
 type GitHubRepoCollaborator struct {
 	Login      string
 	Permission string
+}
+
+type GitHubRepoBranchProtectionRule struct {
+	Pattern string
+
+	IsAdminEnforced bool
+
+	AllowsDeletions   bool
+	AllowsForcePushes bool
+
+	RequiresStatusChecks        bool
+	RequiresStrictStatusChecks  bool
+	RequiredStatusCheckContexts []string
+
+	RestrictsPushes bool
+
+	RequiresLinearHistory bool
+
+	RequiresCommitSignatures bool
+
+	RequiresApprovingReviews     bool
+	RequiredApprovingReviewCount int
+	DismissesStaleReviews        bool
+	RequiresCodeOwnerReviews     bool
+	RestrictsReviewDismissals    bool
 }
 
 func LoadGitHubState(orgName string) (*GitHubState, error) {
@@ -392,6 +420,10 @@ func (state *GitHubState) LoadRepos(ctx context.Context, client *githubv4.Client
 								}
 							}
 						} `graphql:"collaborators(first: 100, affiliation: DIRECT)"` // 100 ought to be enough
+
+						BranchProtectionRules struct {
+							Nodes []GitHubRepoBranchProtectionRule
+						} `graphql:"branchProtectionRules(first: 10)"` // 10 ought to be enough
 					}
 
 					PageInfo struct {
@@ -417,13 +449,14 @@ func (state *GitHubState) LoadRepos(ctx context.Context, client *githubv4.Client
 			}
 
 			repo := GitHubRepo{
-				Name:        node.Name,
-				Description: node.Description,
-				IsPrivate:   node.IsPrivate,
-				HomepageURL: node.HomepageURL,
-				HasIssues:   node.HasIssuesEnabled,
-				HasProjects: node.HasProjectsEnabled,
-				HasWiki:     node.HasWikiEnabled,
+				Name:                  node.Name,
+				Description:           node.Description,
+				IsPrivate:             node.IsPrivate,
+				HomepageURL:           node.HomepageURL,
+				HasIssues:             node.HasIssuesEnabled,
+				HasProjects:           node.HasProjectsEnabled,
+				HasWiki:               node.HasWikiEnabled,
+				BranchProtectionRules: node.BranchProtectionRules.Nodes,
 			}
 
 			for _, node := range node.Topics.Nodes {

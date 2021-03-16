@@ -155,6 +155,16 @@ Each `./repos/*.yml` file has the following fields:
   * `branch` - the branch to build.
   * `path` - the path to serve (default `/`).
   * `cname` - an optional CNAME to set for the website.
+* `branch_protection` - a list of branch protection settings:
+  * `pattern` - branch name pattern to match.
+  * `allows_deletions` - whether the branches can be deleted.
+  * `required_checks` - required status checks for PRs to be merged.
+  * `strict_checks` - require branches to be up-to-date before merging.
+  * `required_reviews` - number of approved reviews required for PRs to be
+    merged.
+  * `dismiss_stale_reviews` - dismiss reviews when new commits are pushed.
+  * `require_code_owner_reviews` - require approval from code owners for PRs
+    which affect files with designated owners.
 
 All repositories have [vulnerability alerts][vulnerability_alerts] enabled.
 

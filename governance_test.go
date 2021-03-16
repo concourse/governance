@@ -38,6 +38,7 @@ func TestGitHub(t *testing.T) {
 					require.Equal(t, desiredRepo.HasProjects, actualRepo.HasProjects, "has projects")
 					require.Equal(t, desiredRepo.HasWiki, actualRepo.HasWiki, "has wiki")
 					require.ElementsMatch(t, desiredRepo.DirectCollaborators, actualRepo.DirectCollaborators, "collaborators")
+					require.ElementsMatch(t, desiredRepo.BranchProtectionRules, actualRepo.BranchProtectionRules, "branch protection")
 				})
 
 				t.Run("belongs to a team", func(t *testing.T) {

@@ -83,21 +83,37 @@ var DiscordPermissions = map[string]int64{
 }
 
 type Repo struct {
-	Name        string     `yaml:"name"`
-	Description string     `yaml:"description"`
-	Private     bool       `yaml:"private,omitempty"`
-	Topics      []string   `yaml:"topics,omitempty"`
-	HomepageURL string     `yaml:"homepage_url,omitempty"`
-	HasIssues   bool       `yaml:"has_issues,omitempty"`
-	HasProjects bool       `yaml:"has_projects,omitempty"`
-	HasWiki     bool       `yaml:"has_wiki,omitempty"`
-	Pages       *RepoPages `yaml:"pages,omitempty"`
+	Name        string   `yaml:"name"`
+	Description string   `yaml:"description"`
+	Private     bool     `yaml:"private,omitempty"`
+	Topics      []string `yaml:"topics,omitempty"`
+	HomepageURL string   `yaml:"homepage_url,omitempty"`
+	HasIssues   bool     `yaml:"has_issues,omitempty"`
+	HasProjects bool     `yaml:"has_projects,omitempty"`
+	HasWiki     bool     `yaml:"has_wiki,omitempty"`
+
+	Pages *RepoPages `yaml:"pages,omitempty"`
+
+	BranchProtection []RepoBranchProtection `yaml:"branch_protection,omitempty"`
 }
 
 type RepoPages struct {
 	CNAME  string `yaml:"cname,omitempty"`
 	Branch string `yaml:"branch"`
 	Path   string `yaml:"path,omitempty"`
+}
+
+type RepoBranchProtection struct {
+	Pattern string `yaml:"pattern"`
+
+	AllowsDeletions bool `yaml:"allows_deletions,omitempty"`
+
+	RequiredChecks []string `yaml:"required_checks,omitempty"`
+	StrictChecks   bool     `yaml:"strict_checks,omitempty"`
+
+	RequiredReviews         int  `yaml:"required_reviews,omitempty"`
+	DismissStaleReviews     bool `yaml:"dismiss_stale_reviews,omitempty"`
+	RequireCodeOwnerReviews bool `yaml:"require_code_owner_reviews,omitempty"`
 }
 
 func LoadConfig(tree fs.FS) (*Config, error) {
@@ -225,7 +241,7 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 	}
 
 	for _, repo := range cfg.Repos {
-		state.Repos = append(state.Repos, GitHubRepo{
+		ghRepo := GitHubRepo{
 			Name:                repo.Name,
 			Description:         sanitize(repo.Description),
 			IsPrivate:           repo.Private,
@@ -235,7 +251,24 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 			HasProjects:         repo.HasProjects,
 			HasWiki:             repo.HasWiki,
 			DirectCollaborators: repoCollaborators[repo.Name],
-		})
+		}
+
+		for _, protection := range repo.BranchProtection {
+			ghRepo.BranchProtectionRules = append(ghRepo.BranchProtectionRules, GitHubRepoBranchProtectionRule{
+				Pattern: protection.Pattern,
+
+				AllowsDeletions: protection.AllowsDeletions,
+
+				RequiredStatusCheckContexts: protection.RequiredChecks,
+				RequiresStrictStatusChecks:  protection.StrictChecks,
+
+				RequiredApprovingReviewCount: protection.RequiredReviews,
+				DismissesStaleReviews:        protection.DismissStaleReviews,
+				RequiresCodeOwnerReviews:     protection.RequireCodeOwnerReviews,
+			})
+		}
+
+		state.Repos = append(state.Repos, ghRepo)
 	}
 
 	return state

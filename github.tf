@@ -68,6 +68,41 @@ resource "github_repository" "repos" {
   }
 }
 
+resource "github_branch_protection" "branch_protections" {
+  for_each = {
+    for protection in local.repo_branch_protections :
+    "${protection.repository_name}:${protection.pattern}" => protection
+  }
+
+  repository_id = github_repository.repos[each.value.repository_name].node_id
+  pattern       = each.value.pattern
+
+  allows_deletions = each.value.allows_deletions
+
+  required_status_checks {
+    contexts = each.value.required_checks
+    strict   = each.value.strict_checks
+  }
+
+  dynamic "required_pull_request_reviews" {
+    for_each = each.value.required_reviews == 0 ? [] : [each.value]
+
+    content {
+      required_approving_review_count = each.value.required_reviews
+      dismiss_stale_reviews           = each.value.dismiss_stale_reviews
+      require_code_owner_reviews      = each.value.require_code_owner_reviews
+    }
+  }
+
+  # force pushing is generally not a great idea, so let's set this to false
+  # until someone has a good reason to make it configurable
+  allows_force_pushes = false
+
+  # there are no repository admins to inconvenience in this model, so we might
+  # as well play it safe
+  enforce_admins = true
+}
+
 resource "github_team_membership" "members" {
   for_each = {
     for membership in local.team_memberships :

@@ -1,6 +1,22 @@
 name: concourse-chart
 description: Helm chart to install Concourse
-topics: []
 has_issues: true
 has_projects: true
 has_wiki: true
+
+branch_protection:
+- pattern: master
+  required_checks:
+  - DCO
+  - concourse-ci/lint-and-install-test
+  required_reviews: 1
+  dismiss_stale_reviews: true
+
+- pattern: dev
+
+- pattern: release/*
+  required_checks:
+  - DCO
+  required_reviews: 1
+  allows_deletions: true
+  dismiss_stale_reviews: true

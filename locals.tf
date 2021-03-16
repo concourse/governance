@@ -43,4 +43,22 @@ locals {
       }
     ]
   ])
+
+  repo_branch_protections = flatten([
+    for repo in local.repos : [
+      for protection in try(repo.branch_protection, []) : {
+        repository_name = repo.name
+        pattern         = protection.pattern
+
+        allows_deletions = try(protection.allows_deletions, false)
+
+        required_checks = try(protection.required_checks, [])
+        strict_checks   = try(protection.strict_checks, false)
+
+        required_reviews           = try(protection.required_reviews, 0)
+        dismiss_stale_reviews      = try(protection.dismiss_stale_reviews, false)
+        require_code_owner_reviews = try(protection.require_code_owner_reviews, false)
+      }
+    ]
+  ])
 }
