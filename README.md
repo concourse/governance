@@ -57,6 +57,9 @@ Each `./contributors/*.yml` file has the following fields:
   share.
 * `github` - the contributor's GitHub login
 * `discord` - the contributor's Discord username + number, e.g. `foo#123`
+* `repos` - map from repo name to permission to grant for the user. this should
+  only be used for bot accounts; in general repo permissions should be done
+  through teams.
 
 Each contributor will be granted membership of the Concourse GitHub
 organization. This does not grant much on its own; repository access for
