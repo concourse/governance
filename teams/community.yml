@@ -18,6 +18,7 @@ repos:
 - docs
 - examples
 - governance
+- office-hours
 
 discord:
   color: 0x94c11f
