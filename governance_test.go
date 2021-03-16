@@ -2,6 +2,7 @@ package governance_test
 
 import (
 	"os"
+	"sort"
 	"testing"
 
 	"github.com/concourse/governance"
@@ -38,6 +39,17 @@ func TestGitHub(t *testing.T) {
 					require.Equal(t, desiredRepo.HasProjects, actualRepo.HasProjects, "has projects")
 					require.Equal(t, desiredRepo.HasWiki, actualRepo.HasWiki, "has wiki")
 					require.ElementsMatch(t, desiredRepo.DirectCollaborators, actualRepo.DirectCollaborators, "collaborators")
+				})
+
+				t.Run("has correct branch protection", func(t *testing.T) {
+					for _, rule := range desiredRepo.BranchProtectionRules {
+						sort.Strings(rule.RequiredStatusCheckContexts)
+					}
+
+					for _, rule := range actualRepo.BranchProtectionRules {
+						sort.Strings(rule.RequiredStatusCheckContexts)
+					}
+
 					require.ElementsMatch(t, desiredRepo.BranchProtectionRules, actualRepo.BranchProtectionRules, "branch protection")
 				})
 

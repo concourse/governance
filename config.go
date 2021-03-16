@@ -259,12 +259,24 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 
 				AllowsDeletions: protection.AllowsDeletions,
 
-				RequiredStatusCheckContexts: protection.RequiredChecks,
-				RequiresStrictStatusChecks:  protection.StrictChecks,
+				RequiresStatusChecks: len(protection.RequiredChecks) > 0,
 
+				// ensure there's an empty slice so comparing in tests doesn't fail
+				// with nil != []
+				RequiredStatusCheckContexts: append([]string{}, protection.RequiredChecks...),
+
+				// having no checks configured seems to force this setting to be
+				// enabled
+				RequiresStrictStatusChecks: protection.StrictChecks || len(protection.RequiredChecks) == 0,
+
+				RequiresApprovingReviews:     protection.RequiredReviews > 0,
 				RequiredApprovingReviewCount: protection.RequiredReviews,
 				DismissesStaleReviews:        protection.DismissStaleReviews,
 				RequiresCodeOwnerReviews:     protection.RequireCodeOwnerReviews,
+
+				// hardcoded defaults in github.tf
+				IsAdminEnforced:   true,
+				AllowsForcePushes: false,
 			})
 		}
 
