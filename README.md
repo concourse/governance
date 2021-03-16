@@ -57,7 +57,6 @@ Each `./contributors/*.yml` file has the following fields:
   share.
 * `github` - the contributor's GitHub login
 * `discord` - the contributor's Discord username + number, e.g. `foo#123`
-* `admin` - whether the contributor will be an admin of the organization.
 
 Each contributor will be granted membership of the Concourse GitHub
 organization. This does not grant much on its own; repository access for

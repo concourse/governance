@@ -19,7 +19,7 @@ locals {
       for person in team.members : {
         team_name = team.name
         username  = local.contributors[person].github
-        role      = try(local.contributors[person].admin, false) ? "maintainer" : "member"
+        role      = "member"
       }
     ]
   ])
