@@ -18,6 +18,7 @@ members:
 
 repos:
 - docs
+- brand
 - examples
 - governance
 
