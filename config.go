@@ -2,6 +2,7 @@ package governance
 
 import (
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -133,7 +134,7 @@ func LoadConfig(tree fs.FS) (*Config, error) {
 		}
 
 		var person Person
-		err = yaml.NewDecoder(file).Decode(&person)
+		err = decode(file, &person)
 		if err != nil {
 			return nil, fmt.Errorf("decode %s: %w", fn, err)
 		}
@@ -156,7 +157,7 @@ func LoadConfig(tree fs.FS) (*Config, error) {
 		}
 
 		var team Team
-		err = yaml.NewDecoder(file).Decode(&team)
+		err = decode(file, &team)
 		if err != nil {
 			return nil, fmt.Errorf("decode %s: %w", fn, err)
 		}
@@ -179,7 +180,7 @@ func LoadConfig(tree fs.FS) (*Config, error) {
 		}
 
 		var repo Repo
-		err = yaml.NewDecoder(file).Decode(&repo)
+		err = decode(file, &repo)
 		if err != nil {
 			return nil, fmt.Errorf("decode %s: %w", fn, err)
 		}
@@ -403,4 +404,10 @@ func permission4to3(v3permission string) string {
 	default:
 		return "invalid"
 	}
+}
+
+func decode(stream io.Reader, dest interface{}) error {
+	dec := yaml.NewDecoder(stream)
+	dec.SetStrict(true)
+	return dec.Decode(dest)
 }
