@@ -98,9 +98,8 @@ resource "github_branch_protection" "branch_protections" {
   # until someone has a good reason to make it configurable
   allows_force_pushes = false
 
-  # there are no repository admins to inconvenience in this model, so we might
-  # as well play it safe
-  enforce_admins = true
+  # concourse-bot needs to be able to push to protected branches
+  enforce_admins = false
 }
 
 resource "github_team_membership" "members" {
