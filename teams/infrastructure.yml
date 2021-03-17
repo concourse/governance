@@ -15,8 +15,8 @@ members:
 - muntac
 
 repos:
+- infrastructure
 - governance
-- greenpeace
 - hush-house
 - oxygen-mask
 - prod

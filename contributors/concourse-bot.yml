@@ -17,7 +17,7 @@ repos:
   boarding-pass: pull
 
   # bumping versions to deploy from CI pipelines
-  greenpeace: push
+  infrastructure: push
 
   # persisting environment state
   platform-automation-deployments: push
