@@ -21,6 +21,7 @@ repos:
 - brand
 - examples
 - governance
+- office-hours
 
 discord:
   color: 0xa652bb
