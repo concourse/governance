@@ -277,7 +277,7 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 				RequiresCodeOwnerReviews:     protection.RequireCodeOwnerReviews,
 
 				// hardcoded defaults in github.tf
-				IsAdminEnforced:   true,
+				IsAdminEnforced:   false,
 				AllowsForcePushes: false,
 			})
 		}
