@@ -1,7 +1,6 @@
 name: infrastructure
 description: |
   Automation stack for the Concourse project's infrastructure.
-private: true
 has_issues: true
 has_projects: true
 has_wiki: true
