@@ -61,4 +61,15 @@ locals {
       }
     ]
   ])
+
+  repo_issue_labels = flatten([
+    for repo in local.repos : [
+      for label in try(repo.labels, []) : {
+        repository_name = repo.name
+
+        name  = label.name
+        color = label.color
+      }
+    ]
+  ])
 }

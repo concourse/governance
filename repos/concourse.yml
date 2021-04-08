@@ -34,3 +34,17 @@ branch_protection:
   required_reviews: 1
   required_checks:
   - DCO
+
+labels:
+- name: rfc
+  color: 0x3d3c3c
+- name: needs priority
+  color: 0xfbca04
+- name: help wanted
+  color: 0x008672
+- name: priority/high
+  color: 0xd93f0b
+- name: priority/medium
+  color: 0xd93f0b
+- name: priority/low
+  color: 0xf9d0c4
