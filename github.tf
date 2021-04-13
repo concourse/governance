@@ -110,7 +110,7 @@ resource "github_issue_label" "labels" {
 
   repository = each.value.repository_name
   name       = each.value.name
-  color      = format("%x", each.value.color)
+  color      = format("%06x", each.value.color)
 }
 
 resource "github_team_membership" "members" {
