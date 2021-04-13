@@ -97,6 +97,8 @@ type Repo struct {
 	Pages *RepoPages `yaml:"pages,omitempty"`
 
 	BranchProtection []RepoBranchProtection `yaml:"branch_protection,omitempty"`
+
+	Labels []RepoLabel `yaml:"labels,omitempty"`
 }
 
 type RepoPages struct {
@@ -116,6 +118,11 @@ type RepoBranchProtection struct {
 	RequiredReviews         int  `yaml:"required_reviews,omitempty"`
 	DismissStaleReviews     bool `yaml:"dismiss_stale_reviews,omitempty"`
 	RequireCodeOwnerReviews bool `yaml:"require_code_owner_reviews,omitempty"`
+}
+
+type RepoLabel struct {
+	Name  string `yaml:"name"`
+	Color int    `yaml:"color"`
 }
 
 func LoadConfig(tree fs.FS) (*Config, error) {

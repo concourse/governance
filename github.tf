@@ -102,6 +102,17 @@ resource "github_branch_protection" "branch_protections" {
   enforce_admins = false
 }
 
+resource "github_issue_label" "labels" {
+  for_each = {
+    for label in local.repo_issue_labels :
+    "${label.repository_name}:${label.name}" => label
+  }
+
+  repository = each.value.repository_name
+  name       = each.value.name
+  color      = format("%x", each.value.color)
+}
+
 resource "github_team_membership" "members" {
   for_each = {
     for membership in local.team_memberships :
