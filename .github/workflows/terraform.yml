@@ -61,3 +61,28 @@ jobs:
 
     - name: Terraform Apply
       run: terraform apply tfplan
+
+  test:
+    needs: terraform
+
+    name: 'Run Tests'
+    runs-on: ubuntu-latest
+    environment: production
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.16
+
+    - name: Run Tests
+      run: go test
+      env:
+        GITHUB_TOKEN: ${{ secrets.ORG_ADMIN_GITHUB_TOKEN }}
