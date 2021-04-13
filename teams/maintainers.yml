@@ -37,10 +37,6 @@ repos:
 - baggageclaim
 - dex
 
-# team onboarding material (currently private as it contains VMware-specific
-# info)
-- boarding-pass
-
 # libraries
 - retryhttp
 - flag

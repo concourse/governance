@@ -13,14 +13,8 @@ repos:
   # needs admin so that it can skip branch protection config
   concourse-chart: admin
 
-  # building and publishing boarding-pass website
-  boarding-pass: pull
-
   # bumping versions to deploy from CI pipelines
   infrastructure: push
-
-  # persisting environment state
-  platform-automation-deployments: push
 
   # bumping blobs in CI pipeline
   concourse-bosh-release: push
