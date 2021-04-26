@@ -35,9 +35,6 @@ type Team struct {
 
 	Repos []string `yaml:"repos,omitempty"`
 
-	// Legacy is set for teams that predated the governance model. These should
-	// be eventually deleted.
-	Legacy bool `yaml:"legacy,omitempty"`
 }
 
 type Discord struct {
@@ -223,10 +220,6 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 	}
 
 	for _, team := range cfg.Teams {
-		if team.Legacy {
-			continue
-		}
-
 		ghTeam := GitHubTeam{
 			Name:        team.Name,
 			Description: sanitize(team.Purpose),

@@ -121,11 +121,6 @@ func main() {
 
 	var teams []governance.Team
 	for _, team := range config.Teams {
-		if team.Legacy {
-			// don't set up roles for legacy teams
-			continue
-		}
-
 		teams = append(teams, team)
 	}
 
