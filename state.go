@@ -22,7 +22,11 @@ const TeamRoleMaintainer TeamRole = "MAINTAINER"
 
 type RepoPermission string
 
+const RepoPermissionAdmin RepoPermission = "ADMIN"
 const RepoPermissionMaintain RepoPermission = "MAINTAIN"
+const RepoPermissionRead RepoPermission = "READ"
+const RepoPermissionTriage RepoPermission = "TRIAGE"
+const RepoPermissionWrite RepoPermission = "WRITE"
 
 type GitHubState struct {
 	Organization string
@@ -133,7 +137,7 @@ func (repo GitHubRepo) Collaborator(login string) (GitHubRepoCollaborator, bool)
 
 type GitHubRepoCollaborator struct {
 	Login      string
-	Permission string
+	Permission RepoPermission
 }
 
 type GitHubRepoBranchProtectionRule struct {
@@ -204,29 +208,6 @@ func (state *GitHubState) ImpliedConfig() Config {
 		Repos:        map[string]Repo{},
 	}
 
-	for _, t := range state.Teams {
-		team := Team{
-			Name:    t.Name,
-			Purpose: t.Description,
-		}
-
-		for _, member := range t.Members {
-			team.Members = append(team.Members, member.Login)
-		}
-
-		for _, repo := range t.Repos {
-			if repo.Permission != RepoPermissionMaintain {
-				// this model only sets teams up with Maintain permission, so skip
-				// anything else
-				continue
-			}
-
-			team.Repos = append(team.Repos, repo.Name)
-		}
-
-		config.Teams[team.Name] = team
-	}
-
 	contributorRepos := map[string]map[string]string{}
 	for _, repo := range state.Repos {
 		config.Repos[repo.Name] = Repo{
@@ -257,6 +238,30 @@ func (state *GitHubState) ImpliedConfig() Config {
 			GitHub: member.Login,
 			Repos:  contributorRepos[member.Login],
 		}
+	}
+
+	for _, t := range state.Teams {
+		team := Team{
+			Name:    t.Name,
+			Purpose: t.Description,
+		}
+
+		if len(t.Members) == len(config.Contributors) {
+			team.AllContributors = true
+		} else {
+			for _, member := range t.Members {
+				team.RawMembers = append(team.RawMembers, member.Login)
+			}
+		}
+
+		for _, repo := range t.Repos {
+			team.Repos = append(team.Repos, repo.Name)
+
+			// just keep assigning assuming they're all the same
+			team.RawRepoPermission = permission4to3(repo.Permission)
+		}
+
+		config.Teams[team.Name] = team
 	}
 
 	return config
@@ -414,7 +419,7 @@ func (state *GitHubState) LoadRepos(ctx context.Context, client *githubv4.Client
 
 						Collaborators struct {
 							Edges []struct {
-								Permission string
+								Permission RepoPermission
 								Node       struct {
 									Login string
 								}

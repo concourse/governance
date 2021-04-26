@@ -31,10 +31,32 @@ type Team struct {
 
 	Discord Discord `yaml:"discord,omitempty"`
 
-	Members []string `yaml:"members"`
+	AllContributors bool     `yaml:"all_contributors"`
+	RawMembers      []string `yaml:"members"`
 
-	Repos []string `yaml:"repos,omitempty"`
+	RawRepoPermission string   `yaml:"repo_permission"`
+	Repos             []string `yaml:"repos,omitempty"`
+}
 
+func (team Team) Members(cfg *Config) map[string]Person {
+	if team.AllContributors {
+		return cfg.Contributors
+	} else {
+		members := map[string]Person{}
+		for _, m := range team.RawMembers {
+			members[m] = cfg.Contributors[m]
+		}
+
+		return members
+	}
+}
+
+func (team Team) RepoPermission() RepoPermission {
+	if team.RawRepoPermission == "" {
+		return RepoPermissionMaintain
+	}
+
+	return permission3to4(team.RawRepoPermission)
 }
 
 type Discord struct {
@@ -199,7 +221,7 @@ func LoadConfig(tree fs.FS) (*Config, error) {
 	}, nil
 }
 
-func (cfg Config) DesiredGitHubState() GitHubState {
+func (cfg *Config) DesiredGitHubState() GitHubState {
 	var state GitHubState
 
 	repoCollaborators := map[string][]GitHubRepoCollaborator{}
@@ -225,17 +247,17 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 			Description: sanitize(team.Purpose),
 		}
 
-		for _, m := range team.Members {
+		for _, member := range team.Members(cfg) {
 			ghTeam.Members = append(ghTeam.Members, GitHubTeamMember{
-				Login: m,
+				Login: member.GitHub,
 				Role:  TeamRoleMember,
 			})
 		}
 
-		for _, r := range team.Repos {
+		for _, repo := range team.Repos {
 			ghTeam.Repos = append(ghTeam.Repos, GitHubTeamRepoAccess{
-				Name:       r,
-				Permission: RepoPermissionMaintain,
+				Name:       repo,
+				Permission: team.RepoPermission(),
 			})
 		}
 
@@ -372,34 +394,34 @@ func sanitize(str string) string {
 	return strings.TrimSpace(strings.Join(strings.Split(str, "\n"), " "))
 }
 
-func permission3to4(v3permission string) string {
+func permission3to4(v3permission string) RepoPermission {
 	switch v3permission {
 	case "pull":
-		return "READ"
+		return RepoPermissionRead
 	case "push":
-		return "WRITE"
+		return RepoPermissionWrite
 	case "admin":
-		return "ADMIN"
+		return RepoPermissionAdmin
 	case "maintain":
-		return "MAINTAIN"
+		return RepoPermissionMaintain
 	case "triage":
-		return "TRIAGE"
+		return RepoPermissionTriage
 	default:
 		return "INVALID"
 	}
 }
 
-func permission4to3(v3permission string) string {
-	switch v3permission {
-	case "READ":
+func permission4to3(v4permission RepoPermission) string {
+	switch v4permission {
+	case RepoPermissionRead:
 		return "pull"
-	case "WRITE":
+	case RepoPermissionWrite:
 		return "push"
-	case "ADMIN":
+	case RepoPermissionAdmin:
 		return "admin"
-	case "MAINTAIN":
+	case RepoPermissionMaintain:
 		return "maintain"
-	case "TRIAGE":
+	case RepoPermissionTriage:
 		return "triage"
 	default:
 		return "invalid"

@@ -211,16 +211,10 @@ func main() {
 		teamRole.Position = position + 1 + contributorsPosition
 		roleOrder = append(roleOrder, teamRole)
 
-		for _, member := range team.Members {
+		for member, contributor := range team.Members(config) {
 			logger := logger.With(
 				zap.String("member", member),
 			)
-
-			contributor, found := config.Contributors[member]
-			if !found {
-				logger.Debug("contributor not found")
-				continue
-			}
 
 			if contributor.Discord == "" {
 				logger.Debug("contributor has no discord user")
