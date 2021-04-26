@@ -73,6 +73,13 @@ func main() {
 				repo.Name+":"+protection.Pattern,
 			)
 		}
+
+		for _, label := range repo.Labels {
+			tf.Import(
+				fmt.Sprintf("github_issue_label.labels[%q]", repo.Name+":"+label.Name),
+				repo.Name+":"+label.Name,
+			)
+		}
 	}
 
 	for _, team := range config.Teams {
