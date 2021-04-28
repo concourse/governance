@@ -24,9 +24,9 @@ func (delta DeltaRoleEdit) Apply(Discord) error {
 	return nil
 }
 
-type DeltaRolesReorder []string
+type DeltaRolePositions []string
 
-func (delta DeltaRolesReorder) Apply(Discord) error {
+func (delta DeltaRolePositions) Apply(Discord) error {
 	return nil
 }
 

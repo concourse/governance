@@ -41,6 +41,8 @@ func Diff(config *governance.Config, discord Discord) ([]Delta, error) {
 		return nil, fmt.Errorf("get members: %w", err)
 	}
 
+	sort.Sort(sort.Reverse(byPosition(actualRoles)))
+
 	roleIDToName := map[string]string{}
 	roleNameToID := map[string]string{}
 	for _, role := range actualRoles {
@@ -125,7 +127,29 @@ func Diff(config *governance.Config, discord Discord) ([]Delta, error) {
 		}
 	}
 
-	var addRoles []DeltaUserAddRole
+	actualRoleOrder := []string{}
+	for _, role := range actualRoles {
+		if teamRoles[role.Name] {
+			actualRoleOrder = append(actualRoleOrder, role.Name)
+		}
+	}
+
+	sameOrder := true
+	if len(roleOrder) != len(actualRoleOrder) {
+		sameOrder = false
+	} else {
+		for i := range roleOrder {
+			if roleOrder[i] != actualRoleOrder[i] {
+				sameOrder = false
+			}
+		}
+	}
+
+	if !sameOrder {
+		deltas = append(deltas, DeltaRolePositions(roleOrder))
+	}
+
+	var addUserRoles []DeltaUserAddRole
 	for userID, desiredRoles := range desiredUserRoles {
 		actualRoles, found := actualUserRoles[userID]
 		if !found {
@@ -137,19 +161,19 @@ func Diff(config *governance.Config, discord Discord) ([]Delta, error) {
 				continue
 			}
 
-			addRoles = append(addRoles, DeltaUserAddRole{
+			addUserRoles = append(addUserRoles, DeltaUserAddRole{
 				UserID:   userID,
 				RoleName: roleName,
 			})
 		}
 	}
 
-	sort.Sort(byAddRole(addRoles))
-	for _, v := range addRoles {
+	sort.Sort(byAddRole(addUserRoles))
+	for _, v := range addUserRoles {
 		deltas = append(deltas, v)
 	}
 
-	var removeRoles []DeltaUserRemoveRole
+	var removeUserRoles []DeltaUserRemoveRole
 	for userID, actualRoles := range actualUserRoles {
 		desiredRoles, found := desiredUserRoles[userID]
 		if !found {
@@ -174,7 +198,7 @@ func Diff(config *governance.Config, discord Discord) ([]Delta, error) {
 			}
 
 			if !desiredRoles[roleName] {
-				removeRoles = append(removeRoles, DeltaUserRemoveRole{
+				removeUserRoles = append(removeUserRoles, DeltaUserRemoveRole{
 					UserID:   userID,
 					RoleName: roleName,
 				})
@@ -182,12 +206,24 @@ func Diff(config *governance.Config, discord Discord) ([]Delta, error) {
 		}
 	}
 
-	sort.Sort(byRemoveRole(removeRoles))
-	for _, v := range removeRoles {
+	sort.Sort(byRemoveRole(removeUserRoles))
+	for _, v := range removeUserRoles {
 		deltas = append(deltas, v)
 	}
 
 	return deltas, nil
+}
+
+type byPosition []DiscordRole
+
+func (roles byPosition) Len() int { return len(roles) }
+
+func (roles byPosition) Swap(i, j int) {
+	roles[i], roles[j] = roles[j], roles[i]
+}
+
+func (roles byPosition) Less(i, j int) bool {
+	return roles[i].Position < roles[j].Position
 }
 
 type byAddRole []DeltaUserAddRole

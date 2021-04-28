@@ -75,18 +75,21 @@ func init() {
 			Name:        "all",
 			Color:       0xabcdef,
 			Permissions: basePermissions,
+			Position:    3,
 		},
 		{
 			ID:          "banana-team-id",
 			Name:        "banana-team",
 			Color:       0x123456,
 			Permissions: basePermissions,
+			Position:    2,
 		},
 		{
 			ID:          "admin-team-id",
 			Name:        "admin-team",
 			Color:       0xbeefad,
 			Permissions: basePermissions | 0x8,
+			Position:    1,
 		},
 	}
 
@@ -102,7 +105,6 @@ func init() {
 			RoleNames: []string{"banana-team", "all"},
 		},
 	}
-
 }
 
 func TestSynced(t *testing.T) {
@@ -114,6 +116,45 @@ func TestSynced(t *testing.T) {
 	diff, err := delta.Diff(config, discord)
 	require.NoError(t, err)
 	require.Empty(t, diff)
+}
+
+func TestReorder(t *testing.T) {
+	discord := fakeDiscord{
+		roles: []delta.DiscordRole{
+			{
+				ID:          "all-team-id",
+				Name:        "all",
+				Color:       0xabcdef,
+				Permissions: basePermissions,
+				Position:    1,
+			},
+			{
+				ID:          "banana-team-id",
+				Name:        "banana-team",
+				Color:       0x123456,
+				Permissions: basePermissions,
+				Position:    2,
+			},
+			{
+				ID:          "admin-team-id",
+				Name:        "admin-team",
+				Color:       0xbeefad,
+				Permissions: basePermissions | 0x8,
+				Position:    3,
+			},
+		},
+		members: syncedMembers,
+	}
+
+	diff, err := delta.Diff(config, discord)
+	require.NoError(t, err)
+	require.Equal(t, []delta.Delta{
+		delta.DeltaRolePositions{
+			"all",
+			"banana-team",
+			"admin-team",
+		},
+	}, diff)
 }
 
 func TestEmptyRoleState(t *testing.T) {
@@ -147,6 +188,11 @@ func TestEmptyRoleState(t *testing.T) {
 			RoleName:    "admin-team",
 			Color:       0xbeefad,
 			Permissions: basePermissions | 0x8,
+		},
+		delta.DeltaRolePositions{
+			"all",
+			"banana-team",
+			"admin-team",
 		},
 		delta.DeltaUserAddRole{
 			UserID:   "andrew-id",

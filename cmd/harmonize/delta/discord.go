@@ -105,12 +105,5 @@ func (discord *discord) Roles() ([]DiscordRole, error) {
 		}
 	}
 
-	// roleIDToName := map[string]string{}
-	// roleNameToID := map[string]string{}
-	// for _, role := range discordRoles {
-	// 	roleIDToName[role.ID] = role.Name
-	// 	roleNameToID[role.Name] = role.ID
-	// }
-
 	return roles, nil
 }
