@@ -254,11 +254,13 @@ func TestRoleEdit(t *testing.T) {
 	require.Equal(t, []delta.Delta{
 		delta.DeltaRoleEdit{
 			RoleID:      "banana-team-id",
+			RoleName:    "banana-team",
 			Color:       0x123456,
 			Permissions: basePermissions,
 		},
 		delta.DeltaRoleEdit{
 			RoleID:      "admin-team-id",
+			RoleName:    "admin-team",
 			Color:       0xbeefad,
 			Permissions: basePermissions | 0x8,
 		},
@@ -382,3 +384,9 @@ func (discord fakeDiscord) Members() ([]delta.DiscordMember, error) {
 func (discord fakeDiscord) Roles() ([]delta.DiscordRole, error) {
 	return discord.roles, nil
 }
+
+func (discord fakeDiscord) CreateRole(delta.DeltaRoleCreate) error          { return nil }
+func (discord fakeDiscord) EditRole(delta.DeltaRoleEdit) error              { return nil }
+func (discord fakeDiscord) SetRolePositions(delta.DeltaRolePositions) error { return nil }
+func (discord fakeDiscord) AddUserRole(delta.DeltaUserAddRole) error        { return nil }
+func (discord fakeDiscord) RemoveUserRole(delta.DeltaUserRemoveRole) error  { return nil }

@@ -9,6 +9,13 @@ import (
 type Discord interface {
 	Members() ([]DiscordMember, error)
 	Roles() ([]DiscordRole, error)
+
+	CreateRole(DeltaRoleCreate) error
+	EditRole(DeltaRoleEdit) error
+	SetRolePositions(DeltaRolePositions) error
+
+	AddUserRole(DeltaUserAddRole) error
+	RemoveUserRole(DeltaUserRemoveRole) error
 }
 
 type DiscordMember struct {
@@ -106,4 +113,116 @@ func (discord *discord) Roles() ([]DiscordRole, error) {
 	}
 
 	return roles, nil
+}
+
+func (discord *discord) CreateRole(delta DeltaRoleCreate) error {
+	role, err := discord.session.GuildRoleCreate(discord.guildID)
+	if err != nil {
+		return fmt.Errorf("create role: %w", err)
+	}
+
+	_, err = discord.session.GuildRoleEdit(
+		discord.guildID,
+		role.ID,
+		delta.RoleName,
+		delta.Color,
+		true,
+		delta.Permissions,
+		true,
+	)
+	if err != nil {
+		return fmt.Errorf("edit newly created role: %w", err)
+	}
+
+	return nil
+}
+
+func (discord *discord) EditRole(delta DeltaRoleEdit) error {
+	_, err := discord.session.GuildRoleEdit(
+		discord.guildID,
+		delta.RoleID,
+		delta.RoleName,
+		delta.Color,
+		true,
+		delta.Permissions,
+		true,
+	)
+	if err != nil {
+		return fmt.Errorf("edit newly created role: %w", err)
+	}
+
+	return nil
+}
+
+func (discord *discord) SetRolePositions(delta DeltaRolePositions) error {
+	roles, err := discord.session.GuildRoles(discord.guildID)
+	if err != nil {
+		return fmt.Errorf("get guild roles: %w", err)
+	}
+
+	var orderedRoles []*discordgo.Role
+	for _, roleName := range delta {
+		var foundRole bool
+		for _, role := range roles {
+			if role.Name == roleName {
+				orderedRoles = append(orderedRoles, role)
+				foundRole = true
+				break
+			}
+		}
+
+		if !foundRole {
+			return fmt.Errorf("role not found: %s", roleName)
+		}
+	}
+
+	_, err = discord.session.GuildRoleReorder(discord.guildID, orderedRoles)
+	if err != nil {
+		return fmt.Errorf("reorder roles: %w", err)
+	}
+
+	return nil
+}
+
+func (discord *discord) AddUserRole(delta DeltaUserAddRole) error {
+	roleID, err := discord.roleID(delta.RoleName)
+	if err != nil {
+		return err
+	}
+
+	err = discord.session.GuildMemberRoleAdd(discord.guildID, delta.UserID, roleID)
+	if err != nil {
+		return fmt.Errorf("add user role: %w", err)
+	}
+
+	return nil
+}
+
+func (discord *discord) RemoveUserRole(delta DeltaUserRemoveRole) error {
+	roleID, err := discord.roleID(delta.RoleName)
+	if err != nil {
+		return err
+	}
+
+	err = discord.session.GuildMemberRoleAdd(discord.guildID, delta.UserID, roleID)
+	if err != nil {
+		return fmt.Errorf("add user role: %w", err)
+	}
+
+	return nil
+}
+
+func (discord *discord) roleID(roleName string) (string, error) {
+	roles, err := discord.session.GuildRoles(discord.guildID)
+	if err != nil {
+		return "", fmt.Errorf("get guild roles: %w", err)
+	}
+
+	for _, role := range roles {
+		if role.Name == roleName {
+			return role.ID, nil
+		}
+	}
+
+	return "", fmt.Errorf("role not found: %s", roleName)
 }

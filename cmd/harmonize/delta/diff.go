@@ -102,6 +102,7 @@ func Diff(config *governance.Config, discord Discord) ([]Delta, error) {
 		} else if existingRole.Color != team.Discord.Color || existingRole.Permissions != permissions {
 			deltas = append(deltas, DeltaRoleEdit{
 				RoleID:      existingRole.ID,
+				RoleName:    roleName,
 				Color:       team.Discord.Color,
 				Permissions: permissions,
 			})

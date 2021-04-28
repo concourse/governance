@@ -10,24 +10,25 @@ type DeltaRoleCreate struct {
 	Permissions int64
 }
 
-func (delta DeltaRoleCreate) Apply(Discord) error {
-	return nil
+func (delta DeltaRoleCreate) Apply(discord Discord) error {
+	return discord.CreateRole(delta)
 }
 
 type DeltaRoleEdit struct {
 	RoleID      string
+	RoleName    string
 	Color       int
 	Permissions int64
 }
 
-func (delta DeltaRoleEdit) Apply(Discord) error {
-	return nil
+func (delta DeltaRoleEdit) Apply(discord Discord) error {
+	return discord.EditRole(delta)
 }
 
 type DeltaRolePositions []string
 
-func (delta DeltaRolePositions) Apply(Discord) error {
-	return nil
+func (delta DeltaRolePositions) Apply(discord Discord) error {
+	return discord.SetRolePositions(delta)
 }
 
 type DeltaUserAddRole struct {
@@ -35,8 +36,8 @@ type DeltaUserAddRole struct {
 	RoleName string
 }
 
-func (delta DeltaUserAddRole) Apply(Discord) error {
-	return nil
+func (delta DeltaUserAddRole) Apply(discord Discord) error {
+	return discord.AddUserRole(delta)
 }
 
 type DeltaUserRemoveRole struct {
@@ -44,6 +45,6 @@ type DeltaUserRemoveRole struct {
 	RoleName string
 }
 
-func (delta DeltaUserRemoveRole) Apply(Discord) error {
-	return nil
+func (delta DeltaUserRemoveRole) Apply(discord Discord) error {
+	return discord.RemoveUserRole(delta)
 }
