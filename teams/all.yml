@@ -1,4 +1,4 @@
-name: contributors
+name: all
 
 purpose: |
   A team for all contributors, granting triage-level permissions for the
@@ -14,5 +14,7 @@ repos:
 - concourse
 
 discord:
+  role: contributors
   color: 0x2ecc71
   priority: 1
+  sticky: true

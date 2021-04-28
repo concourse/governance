@@ -64,7 +64,12 @@ type Discord struct {
 	Color    int    `yaml:"color,omitempty"`
 	Priority int    `yaml:"priority,omitempty"`
 
-	AddedPermissions []string `yaml:"added_permissions,omitempty"`
+	AddedPermissions DiscordPermissionSet `yaml:"added_permissions,omitempty"`
+
+	// if set, the role will never be removed. this is primarily to
+	// grandfather in users who have roles which predated the governance
+	// automation, i.e. the 'contributors' role.
+	Sticky bool `yaml:"sticky,omitempty"`
 }
 
 // 1. copied from https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags
@@ -101,6 +106,41 @@ var DiscordPermissions = map[string]int64{
 	"MANAGE_ROLES":          0x10000000,
 	"MANAGE_WEBHOOKS":       0x20000000,
 	"MANAGE_EMOJIS":         0x40000000,
+}
+
+// defaults copied from newly created role; may be worth tuning later
+type DiscordPermissionSet []string
+
+func (set DiscordPermissionSet) Permissions() (int64, error) {
+	var permissions int64
+	for _, permission := range set {
+		bits, found := DiscordPermissions[permission]
+		if !found {
+			return 0, fmt.Errorf("unknown permission: %s", permission)
+		}
+
+		permissions |= bits
+	}
+
+	return permissions, nil
+}
+
+var TeamRoleBasePermissions = DiscordPermissionSet{
+	"VIEW_CHANNEL",
+	"CREATE_INSTANT_INVITE",
+	"CHANGE_NICKNAME",
+	"SEND_MESSAGES",
+	"EMBED_LINKS",
+	"ATTACH_FILES",
+	"ADD_REACTIONS",
+	"USE_EXTERNAL_EMOJIS",
+	"MENTION_EVERYONE",
+	"READ_MESSAGE_HISTORY",
+	"SEND_TTS_MESSAGES",
+	"CONNECT",
+	"SPEAK",
+	"STREAM",
+	"USE_VAD",
 }
 
 type Repo struct {
