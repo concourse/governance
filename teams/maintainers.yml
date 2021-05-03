@@ -4,13 +4,6 @@ purpose: |
   Shipping the Concourse product and maintaining a high standard for quality,
   stability, and security.
 
-# TODO: due to boring legal/compliance reasons this team is currently limited
-# to VMware employees.
-#
-# Concourse is shipped directly to VMware customers, so we'll need to introduce
-# infrastructure to ensure everything we ship has been vetted by VMware. for
-# example, an internal mirror with only vetted changes manually synced, and an
-# internal pipeline that builds from that mirror.
 members:
 - vito
 - muntac
