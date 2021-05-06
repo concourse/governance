@@ -42,10 +42,11 @@ func main() {
 
 	if len(diff) == 0 {
 		logger.Info("nothing to do")
+		return
 	}
 
 	for _, delta := range diff {
-		err := delta.Apply(discord)
+		err := delta.Apply(logger, discord)
 		if err != nil {
 			logger.Sugar().Fatalf("failed to apply %T: %s", delta, err)
 		}

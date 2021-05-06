@@ -6,6 +6,9 @@ import (
 	"github.com/concourse/governance"
 	"github.com/concourse/governance/cmd/harmonize/delta"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+	"go.uber.org/zap/zaptest/observer"
 )
 
 var basePermissions int64
@@ -211,6 +214,16 @@ func TestEmptyRoleState(t *testing.T) {
 			RoleName: "banana-team",
 		},
 	}, diff)
+
+	core, observed := observer.New(zapcore.InfoLevel)
+	logger := zap.New(core)
+
+	for i, delta := range diff {
+		err = delta.Apply(logger, discord)
+		require.NoError(t, err)
+
+		require.Equal(t, i+1, observed.Len(), "%T did not log its activity", delta)
+	}
 }
 
 func TestRoleEdit(t *testing.T) {
