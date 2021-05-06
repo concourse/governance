@@ -31,13 +31,32 @@ type Team struct {
 
 	Discord Discord `yaml:"discord,omitempty"`
 
-	Members []string `yaml:"members"`
+	AllContributors bool     `yaml:"all_contributors"`
+	RawMembers      []string `yaml:"members"`
 
-	Repos []string `yaml:"repos,omitempty"`
+	RawRepoPermission string   `yaml:"repo_permission"`
+	Repos             []string `yaml:"repos,omitempty"`
+}
 
-	// Legacy is set for teams that predated the governance model. These should
-	// be eventually deleted.
-	Legacy bool `yaml:"legacy,omitempty"`
+func (team Team) Members(cfg *Config) map[string]Person {
+	if team.AllContributors {
+		return cfg.Contributors
+	} else {
+		members := map[string]Person{}
+		for _, m := range team.RawMembers {
+			members[m] = cfg.Contributors[m]
+		}
+
+		return members
+	}
+}
+
+func (team Team) RepoPermission() RepoPermission {
+	if team.RawRepoPermission == "" {
+		return RepoPermissionMaintain
+	}
+
+	return permission3to4(team.RawRepoPermission)
 }
 
 type Discord struct {
@@ -45,7 +64,12 @@ type Discord struct {
 	Color    int    `yaml:"color,omitempty"`
 	Priority int    `yaml:"priority,omitempty"`
 
-	AddedPermissions []string `yaml:"added_permissions,omitempty"`
+	AddedPermissions DiscordPermissionSet `yaml:"added_permissions,omitempty"`
+
+	// if set, the role will never be removed. this is primarily to
+	// grandfather in users who have roles which predated the governance
+	// automation, i.e. the 'contributors' role.
+	Sticky bool `yaml:"sticky,omitempty"`
 }
 
 // 1. copied from https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags
@@ -82,6 +106,41 @@ var DiscordPermissions = map[string]int64{
 	"MANAGE_ROLES":          0x10000000,
 	"MANAGE_WEBHOOKS":       0x20000000,
 	"MANAGE_EMOJIS":         0x40000000,
+}
+
+// defaults copied from newly created role; may be worth tuning later
+type DiscordPermissionSet []string
+
+func (set DiscordPermissionSet) Permissions() (int64, error) {
+	var permissions int64
+	for _, permission := range set {
+		bits, found := DiscordPermissions[permission]
+		if !found {
+			return 0, fmt.Errorf("unknown permission: %s", permission)
+		}
+
+		permissions |= bits
+	}
+
+	return permissions, nil
+}
+
+var TeamRoleBasePermissions = DiscordPermissionSet{
+	"VIEW_CHANNEL",
+	"CREATE_INSTANT_INVITE",
+	"CHANGE_NICKNAME",
+	"SEND_MESSAGES",
+	"EMBED_LINKS",
+	"ATTACH_FILES",
+	"ADD_REACTIONS",
+	"USE_EXTERNAL_EMOJIS",
+	"MENTION_EVERYONE",
+	"READ_MESSAGE_HISTORY",
+	"SEND_TTS_MESSAGES",
+	"CONNECT",
+	"SPEAK",
+	"STREAM",
+	"USE_VAD",
 }
 
 type Repo struct {
@@ -202,7 +261,7 @@ func LoadConfig(tree fs.FS) (*Config, error) {
 	}, nil
 }
 
-func (cfg Config) DesiredGitHubState() GitHubState {
+func (cfg *Config) DesiredGitHubState() GitHubState {
 	var state GitHubState
 
 	repoCollaborators := map[string][]GitHubRepoCollaborator{}
@@ -223,26 +282,22 @@ func (cfg Config) DesiredGitHubState() GitHubState {
 	}
 
 	for _, team := range cfg.Teams {
-		if team.Legacy {
-			continue
-		}
-
 		ghTeam := GitHubTeam{
 			Name:        team.Name,
 			Description: sanitize(team.Purpose),
 		}
 
-		for _, m := range team.Members {
+		for _, member := range team.Members(cfg) {
 			ghTeam.Members = append(ghTeam.Members, GitHubTeamMember{
-				Login: m,
+				Login: member.GitHub,
 				Role:  TeamRoleMember,
 			})
 		}
 
-		for _, r := range team.Repos {
+		for _, repo := range team.Repos {
 			ghTeam.Repos = append(ghTeam.Repos, GitHubTeamRepoAccess{
-				Name:       r,
-				Permission: RepoPermissionMaintain,
+				Name:       repo,
+				Permission: team.RepoPermission(),
 			})
 		}
 
@@ -379,34 +434,34 @@ func sanitize(str string) string {
 	return strings.TrimSpace(strings.Join(strings.Split(str, "\n"), " "))
 }
 
-func permission3to4(v3permission string) string {
+func permission3to4(v3permission string) RepoPermission {
 	switch v3permission {
 	case "pull":
-		return "READ"
+		return RepoPermissionRead
 	case "push":
-		return "WRITE"
+		return RepoPermissionWrite
 	case "admin":
-		return "ADMIN"
+		return RepoPermissionAdmin
 	case "maintain":
-		return "MAINTAIN"
+		return RepoPermissionMaintain
 	case "triage":
-		return "TRIAGE"
+		return RepoPermissionTriage
 	default:
 		return "INVALID"
 	}
 }
 
-func permission4to3(v3permission string) string {
-	switch v3permission {
-	case "READ":
+func permission4to3(v4permission RepoPermission) string {
+	switch v4permission {
+	case RepoPermissionRead:
 		return "pull"
-	case "WRITE":
+	case RepoPermissionWrite:
 		return "push"
-	case "ADMIN":
+	case RepoPermissionAdmin:
 		return "admin"
-	case "MAINTAIN":
+	case RepoPermissionMaintain:
 		return "maintain"
-	case "TRIAGE":
+	case RepoPermissionTriage:
 		return "triage"
 	default:
 		return "invalid"

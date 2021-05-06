@@ -73,6 +73,13 @@ func main() {
 				repo.Name+":"+protection.Pattern,
 			)
 		}
+
+		for _, label := range repo.Labels {
+			tf.Import(
+				fmt.Sprintf("github_issue_label.labels[%q]", repo.Name+":"+label.Name),
+				repo.Name+":"+label.Name,
+			)
+		}
 	}
 
 	for _, team := range config.Teams {
@@ -86,15 +93,15 @@ func main() {
 			strconv.Itoa(actualTeam.ID),
 		)
 
-		for _, member := range team.Members {
-			_, found := actualTeam.Member(member)
+		for _, person := range team.Members(config) {
+			_, found := actualTeam.Member(person.GitHub)
 			if !found {
 				continue
 			}
 
 			tf.Import(
-				fmt.Sprintf("github_team_membership.members[%q]", team.Name+":"+member),
-				strconv.Itoa(actualTeam.ID)+":"+member,
+				fmt.Sprintf("github_team_membership.members[%q]", team.Name+":"+person.GitHub),
+				strconv.Itoa(actualTeam.ID)+":"+person.GitHub,
 			)
 		}
 

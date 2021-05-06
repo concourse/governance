@@ -16,7 +16,7 @@ locals {
 
   team_memberships = flatten([
     for team in local.teams : [
-      for person in team.members : {
+      for person in(try(team.all_contributors, false) ? keys(local.contributors) : team.members) : {
         team_name = team.name
         username  = local.contributors[person].github
         role      = "member"
@@ -29,7 +29,7 @@ locals {
       for repo in try(team.repos, []) : {
         team_name  = team.name
         repository = repo
-        permission = "maintain"
+        permission = try(team.repo_permission, "maintain")
       }
     ]
   ])

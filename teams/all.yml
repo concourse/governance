@@ -1,0 +1,20 @@
+name: all
+
+purpose: |
+  A team for all contributors, granting triage-level permissions for the
+  Concourse repo.
+
+responsibilities:
+- https://github.com/concourse/concourse/blob/master/CODE_OF_CONDUCT.md
+
+all_contributors: true
+repo_permission: triage
+
+repos:
+- concourse
+
+discord:
+  role: contributors
+  color: 0x2ecc71
+  priority: 1
+  sticky: true
