@@ -30,6 +30,12 @@ func main() {
 		logger.Fatal("failed to initialize discord", zap.Error(err))
 	}
 
+	if os.Getenv("DISCORD_DRY_RUN") != "" {
+		logger.Info("performing dry run")
+
+		discord = dryRunDiscord{discord}
+	}
+
 	config, err := governance.LoadConfig(os.DirFS("."))
 	if err != nil {
 		logger.Fatal("failed to load config", zap.Error(err))
@@ -52,3 +58,13 @@ func main() {
 		}
 	}
 }
+
+type dryRunDiscord struct {
+	delta.Discord
+}
+
+func (discord dryRunDiscord) CreateRole(delta.DeltaRoleCreate) error          { return nil }
+func (discord dryRunDiscord) EditRole(delta.DeltaRoleEdit) error              { return nil }
+func (discord dryRunDiscord) SetRolePositions(delta.DeltaRolePositions) error { return nil }
+func (discord dryRunDiscord) AddUserRole(delta.DeltaUserAddRole) error        { return nil }
+func (discord dryRunDiscord) RemoveUserRole(delta.DeltaUserRemoveRole) error  { return nil }
