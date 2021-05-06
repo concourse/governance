@@ -1,5 +1,14 @@
 name: rfcs
-description: structured planning for architectural proposals
-topics: []
-has_issues: false
-has_wiki: true
+
+description: |
+  An open process for designing substantial changes to Concourse.
+
+topics: [rfc]
+
+labels:
+- name: resolution/merge
+  color: 0x6046a3
+- name: resolution/close
+  color: 0xedca61
+- name: resolution/postpone
+  color: 0x696865
