@@ -41,7 +41,7 @@ func Diff(config *governance.Config, discord Discord) ([]Delta, error) {
 		return nil, fmt.Errorf("get members: %w", err)
 	}
 
-	sort.Sort(sort.Reverse(byPosition(actualRoles)))
+	sort.Sort(byPosition(actualRoles))
 
 	roleIDToName := map[string]string{}
 	roleNameToID := map[string]string{}

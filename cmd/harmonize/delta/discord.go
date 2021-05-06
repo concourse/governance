@@ -167,10 +167,11 @@ func (discord *discord) SetRolePositions(delta DeltaRolePositions) error {
 	}
 
 	var orderedRoles []*discordgo.Role
-	for _, roleName := range delta {
+	for position, roleName := range delta {
 		var foundRole bool
 		for _, role := range roles {
 			if role.Name == roleName {
+				role.Position = position + 1
 				orderedRoles = append(orderedRoles, role)
 				foundRole = true
 				break

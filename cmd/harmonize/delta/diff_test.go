@@ -78,7 +78,7 @@ func init() {
 			Name:        "all",
 			Color:       0xabcdef,
 			Permissions: basePermissions,
-			Position:    3,
+			Position:    1,
 		},
 		{
 			ID:          "banana-team-id",
@@ -92,7 +92,7 @@ func init() {
 			Name:        "admin-team",
 			Color:       0xbeefad,
 			Permissions: basePermissions | 0x8,
-			Position:    1,
+			Position:    3,
 		},
 	}
 
@@ -129,7 +129,7 @@ func TestReorder(t *testing.T) {
 				Name:        "all",
 				Color:       0xabcdef,
 				Permissions: basePermissions,
-				Position:    1,
+				Position:    3,
 			},
 			{
 				ID:          "banana-team-id",
@@ -143,7 +143,7 @@ func TestReorder(t *testing.T) {
 				Name:        "admin-team",
 				Color:       0xbeefad,
 				Permissions: basePermissions | 0x8,
-				Position:    3,
+				Position:    1,
 			},
 		},
 		members: syncedMembers,
