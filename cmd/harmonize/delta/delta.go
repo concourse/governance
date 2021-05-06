@@ -53,12 +53,13 @@ func (delta DeltaRolePositions) Apply(logger *zap.Logger, discord Discord) error
 
 type DeltaUserAddRole struct {
 	UserID   string
+	UserName string
 	RoleName string
 }
 
 func (delta DeltaUserAddRole) Apply(logger *zap.Logger, discord Discord) error {
 	logger.Info("adding user role",
-		zap.String("user-id", delta.UserID),
+		zap.String("user", delta.UserName),
 		zap.String("role", delta.RoleName))
 
 	return discord.AddUserRole(delta)
@@ -66,12 +67,13 @@ func (delta DeltaUserAddRole) Apply(logger *zap.Logger, discord Discord) error {
 
 type DeltaUserRemoveRole struct {
 	UserID   string
+	UserName string
 	RoleName string
 }
 
 func (delta DeltaUserRemoveRole) Apply(logger *zap.Logger, discord Discord) error {
 	logger.Info("removing user role",
-		zap.String("user-id", delta.UserID),
+		zap.String("user", delta.UserName),
 		zap.String("role", delta.RoleName))
 
 	return discord.RemoveUserRole(delta)

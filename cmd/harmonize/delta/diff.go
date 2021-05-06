@@ -164,6 +164,7 @@ func Diff(config *governance.Config, discord Discord) ([]Delta, error) {
 
 			addUserRoles = append(addUserRoles, DeltaUserAddRole{
 				UserID:   userID,
+				UserName: userIDToName[userID],
 				RoleName: roleName,
 			})
 		}
@@ -201,6 +202,7 @@ func Diff(config *governance.Config, discord Discord) ([]Delta, error) {
 			if !desiredRoles[roleName] {
 				removeUserRoles = append(removeUserRoles, DeltaUserRemoveRole{
 					UserID:   userID,
+					UserName: userIDToName[userID],
 					RoleName: roleName,
 				})
 			}

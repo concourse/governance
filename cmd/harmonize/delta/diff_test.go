@@ -199,18 +199,22 @@ func TestEmptyRoleState(t *testing.T) {
 		},
 		delta.DeltaUserAddRole{
 			UserID:   "andrew-id",
+			UserName: "andrew#123",
 			RoleName: "admin-team",
 		},
 		delta.DeltaUserAddRole{
 			UserID:   "andrew-id",
+			UserName: "andrew#123",
 			RoleName: "all",
 		},
 		delta.DeltaUserAddRole{
 			UserID:   "potato-id",
+			UserName: "potato#456",
 			RoleName: "all",
 		},
 		delta.DeltaUserAddRole{
 			UserID:   "potato-id",
+			UserName: "potato#456",
 			RoleName: "banana-team",
 		},
 	}, diff)
@@ -307,10 +311,12 @@ func TestUserRoleAddRemove(t *testing.T) {
 	require.Equal(t, []delta.Delta{
 		delta.DeltaUserAddRole{
 			UserID:   "potato-id",
+			UserName: "potato#456",
 			RoleName: "banana-team",
 		},
 		delta.DeltaUserRemoveRole{
 			UserID:   "onion-id",
+			UserName: "onion#789",
 			RoleName: "banana-team",
 		},
 	}, diff)
