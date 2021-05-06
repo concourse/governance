@@ -68,14 +68,20 @@ func (discord *discord) Members() ([]DiscordMember, error) {
 		for _, member := range members {
 			roleNames := make([]string, len(member.Roles))
 
-		dance:
 			for i, roleID := range member.Roles {
+				var roleName string
 				for _, role := range discordRoles {
 					if role.ID == roleID {
-						roleNames[i] = role.Name
-						break dance
+						roleName = role.Name
+						break
 					}
 				}
+
+				if roleName == "" {
+					return nil, fmt.Errorf("could not find name for role %s (user %s)", roleID, member.User)
+				}
+
+				roleNames[i] = roleName
 			}
 
 			discordMembers = append(discordMembers, DiscordMember{
