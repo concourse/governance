@@ -51,7 +51,8 @@ Individual contributors are listed under `./contributors`. Pull requests will
 be reviewed by members of the **community** team. Feel free to submit one at
 any time!
 
-Each `./contributors/*.yml` file has the following fields:
+The name of the file should match your github handle. Each
+`./contributors/*.yml` file has the following fields:
 
 * `name` - the contributor's real name, or an alias if they would rather not
   share.
