@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/concourse/governance"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -19,7 +20,17 @@ func TestGitHub(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("members", func(t *testing.T) {
-		require.ElementsMatch(t, desired.Members, actual.Members)
+		for _, member := range desired.Members {
+			actualMember, found := actual.Member(member.Login)
+			if assert.True(t, found, "%s should be a member of the organization, but is not", member.Login) {
+				assert.Equal(t, member.Role, actualMember.Role, "%s has wrong role", member.Login)
+			}
+		}
+
+		for _, member := range actual.Members {
+			_, found := desired.Member(member.Login)
+			assert.True(t, found, "%s should not be a member", member.Login)
+		}
 	})
 
 	t.Run("repos", func(t *testing.T) {
@@ -91,7 +102,17 @@ func TestGitHub(t *testing.T) {
 				require.True(t, found, "team does not exist")
 
 				t.Run("members", func(t *testing.T) {
-					require.ElementsMatch(t, desiredTeam.Members, actualTeam.Members)
+					for _, member := range desiredTeam.Members {
+						actualMember, found := actualTeam.Member(member.Login)
+						if assert.True(t, found, "%s should be a member of the %s team, but is not", member.Login, desiredTeam.Name) {
+							assert.Equal(t, member.Role, actualMember.Role, "%s has wrong role", member.Login)
+						}
+					}
+
+					for _, member := range actualTeam.Members {
+						_, found := desiredTeam.Member(member.Login)
+						assert.True(t, found, "%s should not be a member of the %s team", member.Login, desiredTeam.Name)
+					}
 				})
 
 				t.Run("repos", func(t *testing.T) {
