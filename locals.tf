@@ -72,4 +72,16 @@ locals {
       }
     ]
   ])
+
+  repo_deploy_keys = flatten([
+    for repo in local.repos : [
+      for key in try(repo.deploy_keys, []) : {
+        repository_name = repo.name
+
+        title     = key.title
+        key       = key.public_key
+        read_only = !try(key.writable, false)
+      }
+    ]
+  ])
 }

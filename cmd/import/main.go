@@ -1,12 +1,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"strconv"
 
 	"github.com/concourse/governance"
+	"github.com/google/go-github/v35/github"
+	"golang.org/x/oauth2"
 )
 
 const organization = "concourse"
@@ -26,6 +29,12 @@ func main() {
 	if err != nil {
 		log.Fatalln("failed to load terraform:", err)
 	}
+
+	ctx := context.Background()
+
+	// v3 client is necessary for getting deploy key numeric IDs, since that's
+	// used as the ID in the github terraform provider. :(
+	v3client := newv3Client(ctx)
 
 	for _, member := range config.Contributors {
 		_, found := state.Member(member.GitHub)
@@ -80,6 +89,31 @@ func main() {
 				repo.Name+":"+label.Name,
 			)
 		}
+
+		v3keys, _, err := v3client.Repositories.ListKeys(ctx, organization, repo.Name, &github.ListOptions{})
+		if err != nil {
+			log.Fatalf("failed to list deploy keys for repo %s: %s", repo.Name, err)
+			return
+		}
+
+		for _, key := range repo.DeployKeys {
+			var keyId int64
+			for _, k := range v3keys {
+				if k.GetTitle() == key.Title {
+					keyId = k.GetID()
+					break
+				}
+			}
+			if keyId == 0 {
+				log.Println("did not find key id for title:", key.Title)
+				continue
+			}
+
+			tf.Import(
+				fmt.Sprintf("github_repository_deploy_key.keys[%q]", repo.Name+":"+key.Title),
+				fmt.Sprintf("%s:%d", repo.Name, keyId),
+			)
+		}
 	}
 
 	for _, team := range config.Teams {
@@ -117,4 +151,17 @@ func main() {
 			)
 		}
 	}
+}
+
+func newv3Client(ctx context.Context) *github.Client {
+	githubToken := os.Getenv("GITHUB_TOKEN")
+	if githubToken == "" {
+		log.Fatalln("no github token provided... somehow")
+	}
+
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: githubToken},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+	return github.NewClient(tc)
 }

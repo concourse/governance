@@ -140,3 +140,15 @@ resource "github_repository_collaborator" "collaborators" {
   username   = each.value.username
   permission = each.value.permission
 }
+
+resource "github_repository_deploy_key" "keys" {
+  for_each = {
+    for k in local.repo_deploy_keys :
+    "${k.repository_name}:${k.title}" => k
+  }
+
+  repository = each.value.repository_name
+  title      = each.value.title
+  key        = each.value.key
+  read_only  = each.value.read_only
+}

@@ -166,18 +166,22 @@ Each `./repos/*.yml` file has the following fields:
   * `dismiss_stale_reviews` - dismiss reviews when new commits are pushed.
   * `require_code_owner_reviews` - require approval from code owners for PRs
     which affect files with designated owners.
+* `deploy_keys` - a list of [deploy keys] to add to the repo
+  * `title` - a title for the key
+  * `public_key` - the public key
+  * `writable` - whether the key can push to the repo
 
-All repositories have [vulnerability alerts][vulnerability_alerts] enabled.
+All repositories have [vulnerability alerts] enabled.
 
-All repositories are configured to [delete branches][delete_branches] once
-their PR is merged.
+All repositories are configured to [delete branches] once their PR is merged.
 
 All repositories will be archived upon deletion from this repo (instead of
 being deleted). Permanent deletion must be done manually by a member of the
 **infrastructure** team.
 
-[vulnerability_alerts]: https://docs.github.com/en/github/managing-security-vulnerabilities/about-alerts-for-vulnerable-dependencies
-[delete_branches]: https://docs.github.com/en/github/administering-a-repository/managing-the-automatic-deletion-of-branches
+[vulnerability alerts]: https://docs.github.com/en/github/managing-security-vulnerabilities/about-alerts-for-vulnerable-dependencies
+[delete branches]: https://docs.github.com/en/github/administering-a-repository/managing-the-automatic-deletion-of-branches
+[deploy keys]: https://docs.github.com/en/developers/overview/managing-deploy-keys
 
 
 ## Amending the Governance Model
