@@ -1,7 +1,9 @@
 name: ci
-description: Configuration files used to automate the testing and release of various
+
+description: |
+  Configuration files used to automate the testing and release of various
   versions of Concourse.
-topics: []
+
 has_issues: true
 has_projects: true
 has_wiki: true

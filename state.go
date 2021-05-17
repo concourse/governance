@@ -123,6 +123,14 @@ type GitHubRepo struct {
 	DirectCollaborators []GitHubRepoCollaborator
 
 	BranchProtectionRules []GitHubRepoBranchProtectionRule
+
+	DeployKeys []GitHubDeployKey
+}
+
+type GitHubDeployKey struct {
+	Title    string
+	Key      string
+	ReadOnly bool
 }
 
 func (repo GitHubRepo) Collaborator(login string) (GitHubRepoCollaborator, bool) {
@@ -429,6 +437,10 @@ func (state *GitHubState) LoadRepos(ctx context.Context, client *githubv4.Client
 						BranchProtectionRules struct {
 							Nodes []GitHubRepoBranchProtectionRule
 						} `graphql:"branchProtectionRules(first: 10)"` // 10 ought to be enough
+
+						DeployKeys struct {
+							Nodes []GitHubDeployKey
+						} `graphql:"deployKeys(first: 10)"` // 10 ought to be enough
 					}
 
 					PageInfo struct {
@@ -462,6 +474,7 @@ func (state *GitHubState) LoadRepos(ctx context.Context, client *githubv4.Client
 				HasProjects:           node.HasProjectsEnabled,
 				HasWiki:               node.HasWikiEnabled,
 				BranchProtectionRules: node.BranchProtectionRules.Nodes,
+				DeployKeys:            node.DeployKeys.Nodes,
 			}
 
 			for _, node := range node.Topics.Nodes {

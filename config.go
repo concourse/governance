@@ -158,6 +158,8 @@ type Repo struct {
 	BranchProtection []RepoBranchProtection `yaml:"branch_protection,omitempty"`
 
 	Labels []RepoLabel `yaml:"labels,omitempty"`
+
+	DeployKeys []RepoDeployKey `yaml:"deploy_keys"`
 }
 
 type RepoPages struct {
@@ -182,6 +184,12 @@ type RepoBranchProtection struct {
 type RepoLabel struct {
 	Name  string `yaml:"name"`
 	Color int    `yaml:"color"`
+}
+
+type RepoDeployKey struct {
+	Title     string `yaml:"title"`
+	PublicKey string `yaml:"public_key"`
+	Writable  bool   `yaml:"writable"`
 }
 
 func LoadConfig(tree fs.FS) (*Config, error) {
@@ -341,6 +349,14 @@ func (cfg *Config) DesiredGitHubState() GitHubState {
 				// hardcoded defaults in github.tf
 				IsAdminEnforced:   false,
 				AllowsForcePushes: false,
+			})
+		}
+
+		for _, deployKey := range repo.DeployKeys {
+			ghRepo.DeployKeys = append(ghRepo.DeployKeys, GitHubDeployKey{
+				Title:    deployKey.Title,
+				Key:      deployKey.PublicKey,
+				ReadOnly: !deployKey.Writable,
 			})
 		}
 

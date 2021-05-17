@@ -20,3 +20,8 @@ branch_protection:
   required_reviews: 1
   allows_deletions: true
   dismiss_stale_reviews: true
+
+deploy_keys:
+- title: "CI Resource: concourse-chart"
+  public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCeonNhN/LwUsA7wsJQasEAY3JdUIkWWhT+7lb+iecRmuLXlpRPZWPY7KM0fsobWRlEc0Sh6OLawtrjdGv9lNeVcT09KIMtJ4f7ficPOt+KYvcmck09UDv+qdu7XwYppfArGVF7qpZdF286RXZli45yWjyBUInLFdG9j4vQ5JKXfMv4wwWMhTrbSoHrfAuxb20Tj5nUsomUc9gf+1f0sKHIkCddNH73BIYNMsLYUyrFkRLlQx9PKNn/xY1ay36sFmIPIn+06UXQUWw8JjXHjKeq4oms09GxOHgUmAetFpSSryoP0JGXc+6cpToatVRxpjA6TDr8BuJJYI9YakpmZ0rFwV1QpNcB2/jbMOm9DJxasJzvO8YHwRgm0G/1BSph3lb/2JTDZ87q/uw50g0oos/W6dN1+fk6NgPO4Fsi9geqClpbfXNr/UaORkyRh522g+n6QJX5+ApjYpBFcLxwUAMTySxVFKec3TW4Osfx6BwfyRL6SA8ltVkQQ8+v0kG++MH5okb4gPBHYoWasAU68M/aoSdBtUj2CLPSzbOJtSwOIhdG82GlUMKG0jaqUwE9vp+PqPp3i+4TbTOeQ/fgJkA7lKy4cVBcpTmAwFlRfWcE8/CQdUQYQlnBhSwEXKNmUkO72dtO9L7pi/bkGMqyB4grsnmmP0J0pUzuoQnHZxS2Iw=="
+  writable: true

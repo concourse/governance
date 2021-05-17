@@ -64,6 +64,10 @@ func TestGitHub(t *testing.T) {
 					require.ElementsMatch(t, desiredRepo.BranchProtectionRules, actualRepo.BranchProtectionRules, "branch protection")
 				})
 
+				t.Run("has correct deploy keys", func(t *testing.T) {
+					require.ElementsMatch(t, desiredRepo.DeployKeys, actualRepo.DeployKeys, "deploy keys")
+				})
+
 				t.Run("belongs to a team", func(t *testing.T) {
 					var belongs bool
 					for _, team := range desired.Teams {

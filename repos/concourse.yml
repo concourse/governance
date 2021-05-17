@@ -48,3 +48,8 @@ labels:
   color: 0xd93f0b
 - name: priority/low
   color: 0xf9d0c4
+
+deploy_keys:
+- title: ci
+  public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDFaQmIMrVRYZ5DocO6xQzNTHn5VoJEDIuXZ4T0oBnyQED4OHU8Iy9jbq9XoaDDwvogTf4t8PstHLd+PVgFFebTZQwUdRCe+XGWQVDwqlUJhEIhVQwW1jiTsDnyo3rx22HrYEYZ+HO9uYliJ5iiQp5WEY1iy91IQ+ru7UieQnCfwathOs62kp/H04ocLxdj7X/FJoIDaB1aCaV0Q5RHqd5ivMu6w8LMpaz3qtBHYOqzyeYxEaeNAVK5KVYJa4FlCcQCaFAIbwu4vYtjD96RfCG851n3/+NQcv4fbLtQVETxuMjuoypcAJK38X8sBMO+ltCM723oxY0akSHwTv0JjcAP"
+  writable: true
