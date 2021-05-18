@@ -7,7 +7,7 @@ resource "mailgun_route" "routes" {
   # resource created them
   description = "mailgun_route.routes[\"${each.key}\"]"
 
-  expression = "match_recipient('${each.key}@concourse-ci.org')"
+  expression = "match_recipient(\"${each.key}@concourse-ci.org\")"
 
   actions = flatten([
     [for email in each.value : "forward(\"${email}\")"],

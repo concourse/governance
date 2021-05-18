@@ -9,7 +9,6 @@ import (
 
 	"github.com/concourse/governance"
 	"github.com/google/go-github/v35/github"
-	"github.com/mailgun/mailgun-go/v4"
 	"golang.org/x/oauth2"
 )
 
@@ -22,17 +21,15 @@ func main() {
 		log.Fatalln("failed to load config:", err)
 	}
 
-	state, err := governance.LoadGitHubState(organization)
+	ghState, err := governance.LoadGitHubState(organization)
 	if err != nil {
 		log.Fatalln("failed to load GitHub state:", err)
 	}
 
-	mailgunAPIKey := os.Getenv("MAILGUN_API_KEY")
-	if mailgunAPIKey == "" {
-		log.Fatalln("no $MAILGUN_API_KEY provided")
+	mgState, err := governance.LoadMailgunState(domain)
+	if err != nil {
+		log.Fatalln("failed to load Mailgun state:", err)
 	}
-
-	mg := mailgun.NewMailgun(domain, mailgunAPIKey)
 
 	tf, err := LoadTerraform()
 	if err != nil {
@@ -46,7 +43,7 @@ func main() {
 	v3client := newv3Client(ctx)
 
 	for _, member := range config.Contributors {
-		_, found := state.Member(member.GitHub)
+		_, found := ghState.Member(member.GitHub)
 		if !found {
 			continue
 		}
@@ -57,7 +54,7 @@ func main() {
 		)
 
 		for repo := range member.Repos {
-			actualRepo, found := state.Repo(repo)
+			actualRepo, found := ghState.Repo(repo)
 			if !found {
 				continue
 			}
@@ -75,7 +72,7 @@ func main() {
 	}
 
 	for _, repo := range config.Repos {
-		_, found := state.Repo(repo.Name)
+		_, found := ghState.Repo(repo.Name)
 		if !found {
 			continue
 		}
@@ -126,7 +123,7 @@ func main() {
 	}
 
 	for _, team := range config.Teams {
-		actualTeam, found := state.Team(team.Name)
+		actualTeam, found := ghState.Team(team.Name)
 		if !found {
 			continue
 		}
@@ -161,15 +158,10 @@ func main() {
 		}
 	}
 
-	iter := mg.ListRoutes(nil)
-
-	var routes []mailgun.Route
-	for iter.Next(ctx, &routes) {
-		for _, route := range routes {
-			// sneaky way of making it easy to import routes back into whichever
-			// resource created them
-			tf.Import(route.Description, fmt.Sprintf("us:%s", route.Id))
-		}
+	for _, route := range mgState.Routes {
+		// sneaky way of making it easy to import routes back into whichever
+		// resource created them
+		tf.Import(route.Description, fmt.Sprintf("us:%s", route.ID))
 	}
 }
 
