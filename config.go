@@ -35,6 +35,8 @@ type Team struct {
 	AllContributors bool     `yaml:"all_contributors"`
 	RawMembers      []string `yaml:"members"`
 
+	RequiresEmail bool `yaml:"requires_email,omitempty"`
+
 	RawRepoPermission string   `yaml:"repo_permission"`
 	Repos             []string `yaml:"repos,omitempty"`
 }
