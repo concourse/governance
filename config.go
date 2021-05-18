@@ -21,6 +21,7 @@ type Person struct {
 	Name    string            `yaml:"name"`
 	GitHub  string            `yaml:"github"`
 	Discord string            `yaml:"discord,omitempty"`
+	Email   string            `yaml:"email,omitempty"`
 	Repos   map[string]string `yaml:"repos,omitempty"`
 }
 

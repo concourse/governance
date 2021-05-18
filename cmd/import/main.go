@@ -9,10 +9,12 @@ import (
 
 	"github.com/concourse/governance"
 	"github.com/google/go-github/v35/github"
+	"github.com/mailgun/mailgun-go/v4"
 	"golang.org/x/oauth2"
 )
 
 const organization = "concourse"
+const domain = "concourse-ci.org"
 
 func main() {
 	config, err := governance.LoadConfig(os.DirFS("."))
@@ -24,6 +26,13 @@ func main() {
 	if err != nil {
 		log.Fatalln("failed to load GitHub state:", err)
 	}
+
+	mailgunAPIKey := os.Getenv("MAILGUN_API_KEY")
+	if mailgunAPIKey == "" {
+		log.Fatalln("no $MAILGUN_API_KEY provided")
+	}
+
+	mg := mailgun.NewMailgun(domain, mailgunAPIKey)
 
 	tf, err := LoadTerraform()
 	if err != nil {
@@ -149,6 +158,17 @@ func main() {
 				fmt.Sprintf("github_team_repository.repos[%q]", team.Name+":"+repo),
 				strconv.Itoa(actualTeam.ID)+":"+repo,
 			)
+		}
+	}
+
+	iter := mg.ListRoutes(nil)
+
+	var routes []mailgun.Route
+	for iter.Next(ctx, &routes) {
+		for _, route := range routes {
+			// sneaky way of making it easy to import routes back into whichever
+			// resource created them
+			tf.Import(route.Description, fmt.Sprintf("us:%s", route.Id))
 		}
 	}
 }
