@@ -27,7 +27,7 @@ func TestMailgun(t *testing.T) {
 				if actualRoute.Description == desiredRoute.Description {
 					found = true
 					assert.Equal(t, desiredRoute.Expression, actualRoute.Expression)
-					assert.Equal(t, desiredRoute.Actions, actualRoute.Actions)
+					assert.ElementsMatch(t, desiredRoute.Actions, actualRoute.Actions)
 					break
 				}
 			}
