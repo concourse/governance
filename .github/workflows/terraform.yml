@@ -41,7 +41,8 @@ jobs:
     - name: Setup Terraform Vars
       run: |
         cat > .auto.tfvars <<EOF
-        github_token = "${{ secrets.ORG_ADMIN_GITHUB_TOKEN}}"
+        github_token = "${{ secrets.ORG_ADMIN_GITHUB_TOKEN }}"
+        mailgun_api_key = "${{ secrets.MAILGUN_API_KEY }}"
         EOF
 
     - name: Setup Terraform State

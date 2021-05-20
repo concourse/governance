@@ -1,0 +1,22 @@
+name: security
+
+purpose: |
+  Acknowledging and triaging reported security vulnerabilities.
+
+responsibilities:
+- develop the security response model, best practices, processes, etc.
+- review security reports made to security@concourse-ci.org
+- collaborate with @maintainers to establish a patch release timeline
+- coordinating communication between @maintainers and the public
+- work with @maintainers to determine severity and publish security advisories
+
+members:
+- vito
+- scottietremendous
+- chenbh
+
+requires_email: true
+
+discord:
+  color: 0x000000
+  priority: 90

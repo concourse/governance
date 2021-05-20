@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -21,6 +20,7 @@ type Person struct {
 	Name    string            `yaml:"name"`
 	GitHub  string            `yaml:"github"`
 	Discord string            `yaml:"discord,omitempty"`
+	Email   string            `yaml:"email,omitempty"`
 	Repos   map[string]string `yaml:"repos,omitempty"`
 }
 
@@ -33,6 +33,8 @@ type Team struct {
 
 	AllContributors bool     `yaml:"all_contributors"`
 	RawMembers      []string `yaml:"members"`
+
+	RequiresEmail bool `yaml:"requires_email,omitempty"`
 
 	RawRepoPermission string   `yaml:"repo_permission"`
 	Repos             []string `yaml:"repos,omitempty"`
@@ -267,182 +269,6 @@ func LoadConfig(tree fs.FS) (*Config, error) {
 		Teams:        teams,
 		Repos:        repos,
 	}, nil
-}
-
-func (cfg *Config) DesiredGitHubState() GitHubState {
-	var state GitHubState
-
-	repoCollaborators := map[string][]GitHubRepoCollaborator{}
-
-	for _, person := range cfg.Contributors {
-		state.Members = append(state.Members, GitHubOrgMember{
-			Name:  person.Name,
-			Login: person.GitHub,
-			Role:  OrgRoleMember,
-		})
-
-		for repo, permission := range person.Repos {
-			repoCollaborators[repo] = append(repoCollaborators[repo], GitHubRepoCollaborator{
-				Login:      person.GitHub,
-				Permission: permission3to4(permission),
-			})
-		}
-	}
-
-	for _, team := range cfg.Teams {
-		ghTeam := GitHubTeam{
-			Name:        team.Name,
-			Description: sanitize(team.Purpose),
-		}
-
-		for _, member := range team.Members(cfg) {
-			ghTeam.Members = append(ghTeam.Members, GitHubTeamMember{
-				Login: member.GitHub,
-				Role:  TeamRoleMember,
-			})
-		}
-
-		for _, repo := range team.Repos {
-			ghTeam.Repos = append(ghTeam.Repos, GitHubTeamRepoAccess{
-				Name:       repo,
-				Permission: team.RepoPermission(),
-			})
-		}
-
-		state.Teams = append(state.Teams, ghTeam)
-	}
-
-	for _, repo := range cfg.Repos {
-		ghRepo := GitHubRepo{
-			Name:                repo.Name,
-			Description:         sanitize(repo.Description),
-			IsPrivate:           repo.Private,
-			Topics:              repo.Topics,
-			HomepageURL:         repo.HomepageURL,
-			HasIssues:           repo.HasIssues,
-			HasProjects:         repo.HasProjects,
-			HasWiki:             repo.HasWiki,
-			DirectCollaborators: repoCollaborators[repo.Name],
-		}
-
-		for _, protection := range repo.BranchProtection {
-			ghRepo.BranchProtectionRules = append(ghRepo.BranchProtectionRules, GitHubRepoBranchProtectionRule{
-				Pattern: protection.Pattern,
-
-				AllowsDeletions: protection.AllowsDeletions,
-
-				RequiresStatusChecks: len(protection.RequiredChecks) > 0,
-
-				// ensure there's an empty slice so comparing in tests doesn't fail
-				// with nil != []
-				RequiredStatusCheckContexts: append([]string{}, protection.RequiredChecks...),
-
-				// having no checks configured seems to force this setting to be
-				// enabled
-				RequiresStrictStatusChecks: protection.StrictChecks || len(protection.RequiredChecks) == 0,
-
-				RequiresApprovingReviews:     protection.RequiredReviews > 0,
-				RequiredApprovingReviewCount: protection.RequiredReviews,
-				DismissesStaleReviews:        protection.DismissStaleReviews,
-				RequiresCodeOwnerReviews:     protection.RequireCodeOwnerReviews,
-
-				// hardcoded defaults in github.tf
-				IsAdminEnforced:   false,
-				AllowsForcePushes: false,
-			})
-		}
-
-		for _, deployKey := range repo.DeployKeys {
-			ghRepo.DeployKeys = append(ghRepo.DeployKeys, GitHubDeployKey{
-				Title:    deployKey.Title,
-				Key:      deployKey.PublicKey,
-				ReadOnly: !deployKey.Writable,
-			})
-		}
-
-		state.Repos = append(state.Repos, ghRepo)
-	}
-
-	return state
-}
-
-func (config Config) SyncMissing(dest string) error {
-	for name, person := range config.Contributors {
-		filePath := filepath.Join(dest, "contributors", name+".yml")
-
-		_, err := os.Stat(filePath)
-		if err == nil {
-			continue
-		}
-
-		if !os.IsNotExist(err) {
-			return err
-		}
-
-		payload, err := yaml.Marshal(person)
-		if err != nil {
-			return err
-		}
-
-		fmt.Printf("syncing missing contributor: %s\n", name)
-
-		err = os.WriteFile(filePath, payload, 0644)
-		if err != nil {
-			return err
-		}
-	}
-
-	for name, team := range config.Teams {
-		filePath := filepath.Join(dest, "teams", name+".yml")
-
-		_, err := os.Stat(filePath)
-		if err == nil {
-			continue
-		}
-
-		if !os.IsNotExist(err) {
-			return err
-		}
-
-		payload, err := yaml.Marshal(team)
-		if err != nil {
-			return err
-		}
-
-		fmt.Printf("syncing missing team: %s\n", name)
-
-		err = os.WriteFile(filePath, payload, 0644)
-		if err != nil {
-			return err
-		}
-	}
-
-	for name, repo := range config.Repos {
-		filePath := filepath.Join(dest, "repos", name+".yml")
-
-		_, err := os.Stat(filePath)
-		if err == nil {
-			continue
-		}
-
-		if !os.IsNotExist(err) {
-			return err
-		}
-
-		payload, err := yaml.Marshal(repo)
-		if err != nil {
-			return err
-		}
-
-		fmt.Printf("syncing missing repo: %s\n", name)
-
-		err = os.WriteFile(filePath, payload, 0644)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 // collapse word-wrapped string YAML blocks

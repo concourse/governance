@@ -28,6 +28,139 @@ const RepoPermissionRead RepoPermission = "READ"
 const RepoPermissionTriage RepoPermission = "TRIAGE"
 const RepoPermissionWrite RepoPermission = "WRITE"
 
+func LoadGitHubState(orgName string) (*GitHubState, error) {
+	ctx := context.Background()
+
+	githubToken := os.Getenv("GITHUB_TOKEN")
+	if githubToken == "" {
+		return nil, fmt.Errorf("no $GITHUB_TOKEN provided")
+	}
+
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: githubToken},
+	)
+
+	client := githubv4.NewClient(oauth2.NewClient(ctx, ts))
+
+	org := &GitHubState{
+		Organization: orgName,
+	}
+
+	err := org.LoadMembers(ctx, client)
+	if err != nil {
+		return nil, err
+	}
+
+	err = org.LoadTeams(ctx, client)
+	if err != nil {
+		return nil, err
+	}
+
+	err = org.LoadRepos(ctx, client)
+	if err != nil {
+		return nil, err
+	}
+
+	return org, nil
+}
+
+func (cfg *Config) DesiredGitHubState() GitHubState {
+	var state GitHubState
+
+	repoCollaborators := map[string][]GitHubRepoCollaborator{}
+
+	for _, person := range cfg.Contributors {
+		state.Members = append(state.Members, GitHubOrgMember{
+			Name:  person.Name,
+			Login: person.GitHub,
+			Role:  OrgRoleMember,
+		})
+
+		for repo, permission := range person.Repos {
+			repoCollaborators[repo] = append(repoCollaborators[repo], GitHubRepoCollaborator{
+				Login:      person.GitHub,
+				Permission: permission3to4(permission),
+			})
+		}
+	}
+
+	for _, team := range cfg.Teams {
+		ghTeam := GitHubTeam{
+			Name:        team.Name,
+			Description: sanitize(team.Purpose),
+		}
+
+		for _, member := range team.Members(cfg) {
+			ghTeam.Members = append(ghTeam.Members, GitHubTeamMember{
+				Login: member.GitHub,
+				Role:  TeamRoleMember,
+			})
+		}
+
+		for _, repo := range team.Repos {
+			ghTeam.Repos = append(ghTeam.Repos, GitHubTeamRepoAccess{
+				Name:       repo,
+				Permission: team.RepoPermission(),
+			})
+		}
+
+		state.Teams = append(state.Teams, ghTeam)
+	}
+
+	for _, repo := range cfg.Repos {
+		ghRepo := GitHubRepo{
+			Name:                repo.Name,
+			Description:         sanitize(repo.Description),
+			IsPrivate:           repo.Private,
+			Topics:              repo.Topics,
+			HomepageURL:         repo.HomepageURL,
+			HasIssues:           repo.HasIssues,
+			HasProjects:         repo.HasProjects,
+			HasWiki:             repo.HasWiki,
+			DirectCollaborators: repoCollaborators[repo.Name],
+		}
+
+		for _, protection := range repo.BranchProtection {
+			ghRepo.BranchProtectionRules = append(ghRepo.BranchProtectionRules, GitHubRepoBranchProtectionRule{
+				Pattern: protection.Pattern,
+
+				AllowsDeletions: protection.AllowsDeletions,
+
+				RequiresStatusChecks: len(protection.RequiredChecks) > 0,
+
+				// ensure there's an empty slice so comparing in tests doesn't fail
+				// with nil != []
+				RequiredStatusCheckContexts: append([]string{}, protection.RequiredChecks...),
+
+				// having no checks configured seems to force this setting to be
+				// enabled
+				RequiresStrictStatusChecks: protection.StrictChecks || len(protection.RequiredChecks) == 0,
+
+				RequiresApprovingReviews:     protection.RequiredReviews > 0,
+				RequiredApprovingReviewCount: protection.RequiredReviews,
+				DismissesStaleReviews:        protection.DismissStaleReviews,
+				RequiresCodeOwnerReviews:     protection.RequireCodeOwnerReviews,
+
+				// hardcoded defaults in github.tf
+				IsAdminEnforced:   false,
+				AllowsForcePushes: false,
+			})
+		}
+
+		for _, deployKey := range repo.DeployKeys {
+			ghRepo.DeployKeys = append(ghRepo.DeployKeys, GitHubDeployKey{
+				Title:    deployKey.Title,
+				Key:      deployKey.PublicKey,
+				ReadOnly: !deployKey.Writable,
+			})
+		}
+
+		state.Repos = append(state.Repos, ghRepo)
+	}
+
+	return state
+}
+
 type GitHubState struct {
 	Organization string
 
@@ -171,108 +304,6 @@ type GitHubRepoBranchProtectionRule struct {
 	DismissesStaleReviews        bool
 	RequiresCodeOwnerReviews     bool
 	RestrictsReviewDismissals    bool
-}
-
-func LoadGitHubState(orgName string) (*GitHubState, error) {
-	ctx := context.Background()
-
-	githubToken := os.Getenv("GITHUB_TOKEN")
-	if githubToken == "" {
-		return nil, fmt.Errorf("no $GITHUB_TOKEN provided")
-	}
-
-	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: githubToken},
-	)
-
-	client := githubv4.NewClient(oauth2.NewClient(ctx, ts))
-
-	org := &GitHubState{
-		Organization: orgName,
-	}
-
-	err := org.LoadMembers(ctx, client)
-	if err != nil {
-		return nil, err
-	}
-
-	err = org.LoadTeams(ctx, client)
-	if err != nil {
-		return nil, err
-	}
-
-	err = org.LoadRepos(ctx, client)
-	if err != nil {
-		return nil, err
-	}
-
-	return org, nil
-}
-
-func (state *GitHubState) ImpliedConfig() Config {
-	config := Config{
-		Contributors: map[string]Person{},
-		Teams:        map[string]Team{},
-		Repos:        map[string]Repo{},
-	}
-
-	contributorRepos := map[string]map[string]string{}
-	for _, repo := range state.Repos {
-		config.Repos[repo.Name] = Repo{
-			Name:        repo.Name,
-			Description: repo.Description,
-			Private:     repo.IsPrivate,
-			Topics:      repo.Topics,
-			HomepageURL: repo.HomepageURL,
-			HasIssues:   repo.HasIssues,
-			HasProjects: repo.HasProjects,
-			HasWiki:     repo.HasWiki,
-		}
-
-		for _, collaborator := range repo.DirectCollaborators {
-			repos, found := contributorRepos[collaborator.Login]
-			if !found {
-				repos = map[string]string{}
-				contributorRepos[collaborator.Login] = repos
-			}
-
-			repos[repo.Name] = permission4to3(collaborator.Permission)
-		}
-	}
-
-	for _, member := range state.Members {
-		config.Contributors[member.Login] = Person{
-			Name:   member.Name,
-			GitHub: member.Login,
-			Repos:  contributorRepos[member.Login],
-		}
-	}
-
-	for _, t := range state.Teams {
-		team := Team{
-			Name:    t.Name,
-			Purpose: t.Description,
-		}
-
-		if len(t.Members) == len(config.Contributors) {
-			team.AllContributors = true
-		} else {
-			for _, member := range t.Members {
-				team.RawMembers = append(team.RawMembers, member.Login)
-			}
-		}
-
-		for _, repo := range t.Repos {
-			team.Repos = append(team.Repos, repo.Name)
-
-			// just keep assigning assuming they're all the same
-			team.RawRepoPermission = permission4to3(repo.Permission)
-		}
-
-		config.Teams[team.Name] = team
-	}
-
-	return config
 }
 
 func (state *GitHubState) LoadMembers(ctx context.Context, client *githubv4.Client) error {

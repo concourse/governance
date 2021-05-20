@@ -14,6 +14,14 @@ locals {
     trimsuffix(basename(f), ".yml") => yamldecode(file(f))
   }
 
+  team_mail_recipients = {
+    for team in local.teams :
+    team.name => compact([
+      for person in try(team.members, []) :
+      try(local.contributors[person].email, "")
+    ]) if length(try(team.members, [])) > 0
+  }
+
   team_memberships = flatten([
     for team in local.teams : [
       for person in(try(team.all_contributors, false) ? keys(local.contributors) : team.members) : {
