@@ -88,3 +88,4 @@ jobs:
       run: go test
       env:
         GITHUB_TOKEN: ${{ secrets.ORG_ADMIN_GITHUB_TOKEN }}
+        MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
