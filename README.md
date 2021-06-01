@@ -103,17 +103,27 @@ the [Maintain permission][permissions].
 Each team is responsible for determining the best way for the team to operate,
 though it is strongly encouraged that each team work in the open, either on
 GitHub or somewhere easy to access, to the extent that doing so is beneficial
-to the team and to the community.
+to the team and to the community. (For example, teams may choose to use a
+private discussion area to handle sensitive matters.)
 
-Decisions are reached through consensus among the team through a 66%+
+Suggestion: team processes can be defined in a new repository managed
+exclusively by the team. The team repository can be created via submitting a PR
+to this repo. See [Repositories](#repositories).
+
+#### Voting
+
+Decisions are reached through consensus among the team members through a 66%+
 supermajority unless stated otherwise through the team's own processes.
 (Implementation of said process would require a 66% supermajority.)
 
-Teams currently do not require designated leaders, though there may be a reason
-to add this someday.
+Voting can be expressed through pull request review, leaving a comment, or
+through some other form of record - ideally permanent.
+
+Teams are not required to have designated leaders. Teams may choose to
+designate a leader and define their role and responsibilities through a vote
+amongst the team.
 
 [permissions]: https://docs.github.com/en/github/setting-up-and-managing-organizations-and-teams/repository-permission-levels-for-an-organization
-
 
 #### Joining a Team
 
@@ -125,6 +135,10 @@ There are no specific qualifications for joining a team - being accepted into a
 team is entirely subjective and the barrier to entry will vary from team to
 team. Applications with no prior context or trust to build upon will almost
 certainly be rejected.
+
+Pull requests that add someone to a team require enough approving reviewers to
+pass the [voting process](#voting). The **community** team is responsible for
+determining the required votes and merging when they have all been acquired.
 
 
 #### Creating a new Team
