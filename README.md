@@ -103,17 +103,27 @@ the [Maintain permission][permissions].
 Each team is responsible for determining the best way for the team to operate,
 though it is strongly encouraged that each team work in the open, either on
 GitHub or somewhere easy to access, to the extent that doing so is beneficial
-to the team and to the community.
+to the team and to the community. (For example, teams may choose to use a
+private discussion area to handle sensitive matters.)
 
-Decisions are reached through consensus among the team through a 66%+
+Suggestion: team processes can be defined in a new repository managed
+exclusively by the team. The team repository can be created via submitting a PR
+to this repo. See [Repositories](#repositories).
+
+#### Voting
+
+Decisions are reached through consensus among the team members through a 66%+
 supermajority unless stated otherwise through the team's own processes.
 (Implementation of said process would require a 66% supermajority.)
 
-Teams currently do not require designated leaders, though there may be a reason
-to add this someday.
+Voting can be expressed through pull request review, leaving a comment, or
+through some other form of record - ideally permanent.
+
+Teams are not required to have designated leaders. Teams may choose to
+designate a leader and define their role and responsibilities through a vote
+amongst the team.
 
 [permissions]: https://docs.github.com/en/github/setting-up-and-managing-organizations-and-teams/repository-permission-levels-for-an-organization
-
 
 #### Joining a Team
 
@@ -121,10 +131,31 @@ To propose the addition of a team member (either yourself or on behalf of
 someone else), submit a PR that adds them as a contributor (if needed) and
 lists them as a member of the desired team.
 
-There are no specific qualifications for joining a team - being accepted into a
-team is entirely subjective and the barrier to entry will vary from team to
-team. Applications with no prior context or trust to build upon will almost
-certainly be rejected.
+Pull requests that add someone to a team require enough approving reviewers to
+pass the [voting process](#voting). The **community** team member reviewing the
+pull request is responsible for determining the number of required votes based
+on the destination team's size and voting process, and they will merge the PR
+when the necessary votes have been acquired, or close the PR if the necessary
+votes cannot be reached. (Note: there's room for human error here; ideally this
+would be automated, but until then please assist by leaving a comment if
+anything is wrong.)
+
+There are no specific qualifications for joining a team outlined by the
+governance model itself; gaining an approving vote may be entirely subjective
+and the barrier to entry will vary from team to team. As a general rule,
+applications with no prior context or trust to build upon will almost certainly
+be rejected.
+
+
+#### Leaving a team
+
+A team member may choose to leave their team at any time by submitting a PR
+that removes themself from the list of members. A vote is not necessary for
+voluntarily leaving a team.
+
+To remove someone *else* from the team, submit a PR as above and it will go
+through the same voting process as joining. The member being removed may also
+vote.
 
 
 #### Creating a new Team
