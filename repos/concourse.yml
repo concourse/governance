@@ -23,6 +23,7 @@ branch_protection:
 - pattern: master
   required_checks:
   - DCO
+  - "DeepSource: Go"
   - concourse-ci/validate-labels
   - concourse-ci/unit
   - concourse-ci/integration
