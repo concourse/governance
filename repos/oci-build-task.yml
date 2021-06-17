@@ -1,0 +1,4 @@
+name: oci-build-task
+description: a Concourse task for building OCI images
+topics: [docker, golang, concourse, oci, oci-image, buildkit, concourse-task]
+has_issues: true
