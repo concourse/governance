@@ -70,6 +70,11 @@ repos:
 - datadog-event-resource
 - mock-resource
 
+# officially supported generic, reusable tasks
+#
+# these should be converted to Prototypes in the future
+- oci-build-task
+
 discord:
   role: maintainers
   color: 0xf8c300
