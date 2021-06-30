@@ -3,3 +3,7 @@ description: Documentation and automation for the Concourse project governance m
 topics:
 - governance
 has_issues: true
+
+branch_protection:
+- pattern: master
+  required_reviews: 1
