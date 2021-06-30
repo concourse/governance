@@ -4,6 +4,9 @@ topics:
 - governance
 has_issues: true
 
-branch_protection:
-- pattern: master
-  required_reviews: 1
+# TODO: enable this when the github terraform provider supports creating branch
+# protection when none currently exists or set it manually and then uncomment
+# this.
+# branch_protection:
+# - pattern: master
+#   required_reviews: 1
