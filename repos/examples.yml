@@ -1,6 +1,6 @@
 name: examples
 description: Examples of Concourse workflows
-topics: []
+topics: ["concourse", "concourse-ci"]
 has_issues: true
-has_projects: true
-has_wiki: true
+has_projects: false
+has_wiki: false
