@@ -1,4 +1,0 @@
-name: baggageclaim
-description: stateless volume manager for Concourse builds and resource caches
-topics: []
-has_issues: false
