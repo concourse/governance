@@ -27,7 +27,6 @@ responsibilities:
 repos:
 # core components
 - concourse
-- baggageclaim
 - dex
 
 # libraries
