@@ -46,6 +46,7 @@ repos:
 - concourse-docker
 - concourse-bosh-deployment
 - drills
+- booklit
 
 # core resource types and marketplace website
 #

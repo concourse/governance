@@ -25,6 +25,7 @@ repos:
 - examples
 - governance
 - office-hours
+- booklit
 
 discord:
   color: 0xa652bb
