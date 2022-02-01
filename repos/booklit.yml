@@ -1,0 +1,9 @@
+name: booklit
+
+description: |
+  a pretty lit content authoring system.
+  Forked from vito/booklit
+
+has_issues: true
+has_projects: true
+has_wiki: true
