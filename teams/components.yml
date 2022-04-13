@@ -1,0 +1,43 @@
+name: components
+
+purpose: |
+  A team for contributors assisting with triaging resource and reusable
+  task repositories.
+
+members:
+  - lrstanley
+  - taylorsilva
+
+responsibilities:
+  - assist with triaging issues reported by users
+  - assist with triaging pull requests opened by other contributors
+  - https://github.com/concourse/concourse/blob/master/CODE_OF_CONDUCT.md
+
+repo_permission: triage
+repos:
+  # core resource types
+  - bosh-io-release-resource
+  - bosh-io-stemcell-resource
+  - datadog-event-resource
+  - docker-image-resource
+  - git-resource
+  - github-release-resource
+  - hg-resource
+  - mock-resource
+  - pool-resource
+  - registry-image-resource
+  - s3-resource
+  - semver-resource
+  - time-resource
+  - tracker-resource
+
+  # officially supported generic, reusable tasks
+  #
+  # these should be converted to Prototypes in the future
+  - oci-build-task
+
+discord:
+  role: components
+  color: 0xe69138
+  priority: 10
+  sticky: false
