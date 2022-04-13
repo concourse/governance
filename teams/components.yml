@@ -9,6 +9,8 @@ members:
   - taylorsilva
 
 responsibilities:
+  - assist with triaging issues reported by users
+  - assist with triaging pull requests opened by other contributors
   - https://github.com/concourse/concourse/blob/master/CODE_OF_CONDUCT.md
 
 repo_permission: triage
