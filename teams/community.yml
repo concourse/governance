@@ -22,7 +22,6 @@ members:
 
 repos:
 - docs
-- brand
 - examples
 - governance
 - office-hours
