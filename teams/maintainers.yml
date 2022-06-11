@@ -32,12 +32,6 @@ repos:
 # libraries
 - retryhttp
 - flag
-- voyager
-- go-archive
-
-# k8s runtime PoC repos
-- csi-driver-image-populator
-- csi-driver-host-path
 
 # release infrastructure
 - ci
@@ -45,7 +39,6 @@ repos:
 - concourse-chart
 - concourse-docker
 - concourse-bosh-deployment
-- drills
 - booklit
 
 # core resource types and marketplace website
@@ -56,7 +49,6 @@ repos:
 - resource-types-website
 - docker-image-resource
 - git-resource
-- lfs-test-repo # used by git-resource tests
 - semver-resource
 - s3-resource
 - github-release-resource
