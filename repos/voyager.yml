@@ -1,6 +1,0 @@
-name: voyager
-description: A database migration library that supports Go and SQL migrations.
-topics: []
-has_issues: true
-has_projects: true
-has_wiki: true
