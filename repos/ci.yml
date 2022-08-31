@@ -10,5 +10,5 @@ has_wiki: true
 
 deploy_keys:
 - title: ci
-  public_key: "ecdsa-sha2-nistp384 AAAAE2VjZHNhLXNoYTItbmlzdHAzODQAAAAIbmlzdHAzODQAAABhBMeRfBQR43pD9VMR5PZPamhlMT4iEW5VgG2FWHgIbDeDYY13yCe2j0FfkrpHRGD1qScOx+xmqXHe4yZwb5+i4tnUOzhq8hT7c5vR4HWvxCDg52qPnrdKyFu9PnCjgdHd0Q=="
+  public_key: "ecdsa-sha2-nistp384 AAAAE2VjZHNhLXNoYTItbmlzdHAzODQAAAAIbmlzdHAzODQAAABhBF+XMIgdZH53g5HndXiuGH8TP0k6ZdPoIR5VggYbw1mQbL1AOJ5w3oZruRqdRX0U6urwAB1X4R5s0Q+cpONid5UOBQdmFBhQEK1oLwwPXGV21Nti76F/FwSPUrgBPG5JSg=="
   writable: true
