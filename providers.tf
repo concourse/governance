@@ -1,11 +1,11 @@
 terraform {
   required_providers {
     github = {
-      source  = "integrations/github"
+      source = "integrations/github"
     }
 
     mailgun = {
-      source  = "wgebis/mailgun"
+      source = "wgebis/mailgun"
     }
   }
 }
