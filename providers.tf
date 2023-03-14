@@ -14,7 +14,7 @@ terraform {
 
 provider "github" {
   token        = var.github_token
-  organization = "concourse"
+  owner = "concourse"
 }
 
 provider "mailgun" {
