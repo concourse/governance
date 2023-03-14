@@ -2,19 +2,17 @@ terraform {
   required_providers {
     github = {
       source  = "integrations/github"
-      version = "4.6.0"
     }
 
     mailgun = {
       source  = "wgebis/mailgun"
-      version = "0.6.1"
     }
   }
 }
 
 provider "github" {
-  token        = var.github_token
-  organization = "concourse"
+  token = var.github_token
+  owner = "concourse"
 }
 
 provider "mailgun" {
