@@ -28,7 +28,7 @@ locals {
         team_name = team.name
         username  = try(local.contributors[person].github, "")
         role      = "member"
-      }
+      } if try(local.contributors[person].github, "") != ""
     ]
   ])
 
