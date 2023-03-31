@@ -183,6 +183,7 @@ Each `./repos/*.yml` file has the following fields:
 * `has_projects` - whether the repository has Projects enabled (default
   `false`).
 * `has_wiki` - whether the repository has the Wiki enabled (default `false`).
+* `has_discussions ` - whether the repository has the Discussions enabled (default `false`).
 * `pages` - GitHub pages configuration:
   * `branch` - the branch to build.
   * `path` - the path to serve (default `/`).

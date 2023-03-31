@@ -35,10 +35,11 @@ resource "github_repository" "repos" {
   #   terraform apply
   topics = try(each.value.topics, [])
 
-  homepage_url = try(each.value.homepage_url, null)
-  has_issues   = try(each.value.has_issues, false)
-  has_projects = try(each.value.has_projects, false)
-  has_wiki     = try(each.value.has_wiki, false)
+  homepage_url    = try(each.value.homepage_url, null)
+  has_issues      = try(each.value.has_issues, false)
+  has_projects    = try(each.value.has_projects, false)
+  has_wiki        = try(each.value.has_wiki, false)
+  has_discussions = try(each.value.has_discussions, false)
 
   # this was deprecated in 2013 but still defaults to true?
   has_downloads = false

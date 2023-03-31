@@ -146,14 +146,15 @@ var TeamRoleBasePermissions = DiscordPermissionSet{
 }
 
 type Repo struct {
-	Name        string   `yaml:"name"`
-	Description string   `yaml:"description"`
-	Private     bool     `yaml:"private,omitempty"`
-	Topics      []string `yaml:"topics,omitempty"`
-	HomepageURL string   `yaml:"homepage_url,omitempty"`
-	HasIssues   bool     `yaml:"has_issues,omitempty"`
-	HasProjects bool     `yaml:"has_projects,omitempty"`
-	HasWiki     bool     `yaml:"has_wiki,omitempty"`
+	Name           string   `yaml:"name"`
+	Description    string   `yaml:"description"`
+	Private        bool     `yaml:"private,omitempty"`
+	Topics         []string `yaml:"topics,omitempty"`
+	HomepageURL    string   `yaml:"homepage_url,omitempty"`
+	HasIssues      bool     `yaml:"has_issues,omitempty"`
+	HasProjects    bool     `yaml:"has_projects,omitempty"`
+	HasWiki        bool     `yaml:"has_wiki,omitempty"`
+	HasDiscussions bool     `yaml:"has_discussions,omitempty"`
 
 	Pages *RepoPages `yaml:"pages,omitempty"`
 
