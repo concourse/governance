@@ -4,8 +4,9 @@ on:
   push:
     branches: [master]
 
-  schedule:
-  - cron: '0 0 * * *'
+  # disable the schedule until we fix the workflow.
+  # schedule:
+  # - cron: '0 0 * * *'
 
 jobs:
   terraform:
