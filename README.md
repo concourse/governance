@@ -1,4 +1,8 @@
-# Concourse Governance
+# Concourse Governance (Archived)
+
+**Concourse is joining the Cloud Foundry Foundation. They have their own mechanics for org governance that we are going to use instead.**
+
+---
 
 This document outlines a set of policies in order to provide a level playing
 field and open process for contributors to join the Concourse project.
